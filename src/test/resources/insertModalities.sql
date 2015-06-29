@@ -1,0 +1,1 @@
+INSERT INTO modality (id, name, description, ip, port, timeout) values (1, 'X-Ray', 'X ray machine', 'XXXX.XXXX.XXXX.XXXX', 9001, 10);
