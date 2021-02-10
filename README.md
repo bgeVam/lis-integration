@@ -1,4 +1,4 @@
-# PACS-Integration
+# LIS-Integration
 
 ## Features
 
@@ -13,32 +13,27 @@ sudo apt install -y maven
 sudo apt install -y gradle
 ```
 
-Step 1: Go inside pacs-integration project directory
+Step 1: Go inside lis-integration project directory
 ```
-cd pacs-integration
+cd lis-integration
 ```
 
-Step 2: Compile the project to generate pacs-integration.war file.
+Step 2: Compile the project to generate lis-integration.war file.
 ```
 mvn clean install 
 ```
 
-Step 3: Clone bahmni-package project to generate new rpm file for lis-integration 
+Step 3: Move lis-integration.war file from lis-integration project to bahmni-package project
 ```
-git clone https://github.com/Bahmni/bahmni-package.git
-```
-
-Step 4: Move pacs-integration.war file from pacs-integration project to bahmni-package project
-```
-mv pacs-integration-webapp/target/pacs-integration.war /bahmni-package/bahmni-pacs/resources/pacs-integration/
+mv lis-integration-webapp/target/lis-integration.war /bahmni-package/bahmni-lis/resources/lis-integration/
 ```
 
-Step 5: Genarete new rpm file for pacs-integration
+Step 4: Genarete new rpm file for lis-integration
 ```
-cd bahmni_package && ./gradlew :bahmni-pacs:clean :bahmni-pacs:dist
+cd bahmni_package && ./gradlew :bahmni-lis:clean :bahmni-lis:dist
 ```
 
-Now we should have a generated rpm file in this directory ```bahmni-package/bahmni-pacs/build/distributions``` with name **pacs-integration-0.93-1.noarch.rpm**.
+Now we should have a generated rpm file in this directory ```bahmni-package/bahmni-lis/build/distributions``` with name **lis-integration-0.93-1.noarch.rpm**.
 
 ### Contributing
 

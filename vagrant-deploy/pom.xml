@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>pacs-integration</artifactId>
+        <artifactId>lis-integration</artifactId>
         <groupId>org.bahmni</groupId>
         <version>0.92-SNAPSHOT</version>
     </parent>
@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bahmni</groupId>
-            <artifactId>pacs-integration-webapp</artifactId>
+            <artifactId>lis-integration-webapp</artifactId>
             <classifier>classes</classifier>
             <version>0.92-SNAPSHOT</version>
         </dependency>

@@ -1,0 +1,1 @@
+INSERT INTO order_type (id, name, lis_id) VALUES (1, 'Lab Order', 1);

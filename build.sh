@@ -52,14 +52,11 @@ cat << EOFMAVENSETTINGS > /root/.m2/custom-settings.xml
 </settings>
 EOFMAVENSETTINGS
 
-# Compile pacs-integration project
+# Compile lis-integration project
 mvn -gs /root/.m2/custom-settings.xml clean package
 
-# Clone project bahmni-package
-git clone https://github.com/Bahmni/bahmni-package.git
-
-# Move pacs-integration.war file to the bahmni-package project
-mv pacs-integration-webapp/target/pacs-integration.war /home/bahmni-package/bahmni-pacs/resources/pacs-integration/
+# Move lis-integration.war file to the bahmni-package project
+mv lis-integration-webapp/target/lis-integration.war bahmni-package/bahmni-lis/resources/lis-integration/
 
 # Setting proxy settings for gradle
 mkdir /root/.gradle
@@ -71,4 +68,4 @@ systemProp.https.proxyPort=800
 EOF
 
 # Generate RPM file
-cd bahmni-package && ./gradlew :bahmni-pacs:clean :bahmni-pacs:dist
+cd bahmni-package && ./gradlew :bahmni-lis:clean :bahmni-lis:dist

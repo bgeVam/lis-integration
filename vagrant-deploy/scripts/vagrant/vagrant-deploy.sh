@@ -11,7 +11,7 @@ PROJECT_BASE=$PATH_OF_CURRENT_SCRIPT/../../..
 SCRIPTS_DIR=$CWD/scripts/vagrant
 
 
-# Deploy pacs
-scp_to_vagrant $PROJECT_BASE/pacs-integration-webapp/target/pacs-integration.war $MODULE_DEPLOYMENT_FOLDER/pacs-integration.war
+# Deploy lis
+scp_to_vagrant $PROJECT_BASE/lis-integration-webapp/target/lis-integration.war $MODULE_DEPLOYMENT_FOLDER/lis-integration.war
 
 run_in_vagrant -f "$SCRIPTS_DIR/deploy_war.sh"
