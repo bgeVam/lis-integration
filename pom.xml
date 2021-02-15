@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.bahmni</groupId>
-    <artifactId>pacs-integration</artifactId>
+    <artifactId>lis-integration</artifactId>
     <version>0.92-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -17,7 +17,7 @@
 
     <modules>
         <module>vagrant-deploy</module>
-        <module>pacs-integration-webapp</module>
+        <module>lis-integration-webapp</module>
     </modules>
     <build>
         <extensions>
