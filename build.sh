@@ -69,3 +69,4 @@ EOF
 
 # Generate RPM file
 cd bahmni-package && ./gradlew :bahmni-lis:clean :bahmni-lis:dist
+mv /home/bahmni-package/bahmni-lis/build/distributions/*.rpm /home/artifacts/
