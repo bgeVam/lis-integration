@@ -19,7 +19,7 @@ public class OpenMRSEncounterToOrderMapper {
         order.setTestName(openMRSOrder.getConcept().getName().getName());
         order.setTestUuid(openMRSOrder.getConcept().getUuid());
         order.setOrderType(findOrderType(orderTypes, openMRSOrder.getOrderType()));
-        order.setDateCreated(new Date());
+        order.setDateCreated(openMRSOrder.getDateCreated());
         order.setCreator(providerName);
         order.setComment(openMRSOrder.getCommentToFulfiller());
         return order;
