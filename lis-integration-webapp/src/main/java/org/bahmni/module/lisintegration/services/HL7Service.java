@@ -116,6 +116,7 @@ public class HL7Service {
         obr.getUniversalServiceIdentifier().getText().setValue(lisConceptSource.getName());
         obr.getReasonForStudy(0).getText().setValue(order.getCommentToFulfiller());
         obr.getCollectorSComment(0).getText().setValue(order.getConcept().getName().getName());
+        obr.getObr7_ObservationDateTime().getTime().setValue(order.getDateCreated());
     }
 
     private void addProviderDetails(List<OpenMRSProvider> providers, ORM_O01 message) throws DataTypeException {

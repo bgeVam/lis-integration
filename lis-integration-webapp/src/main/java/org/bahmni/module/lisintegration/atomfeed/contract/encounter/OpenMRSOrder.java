@@ -3,6 +3,8 @@ package org.bahmni.module.lisintegration.atomfeed.contract.encounter;
 import org.bahmni.module.lisintegration.atomfeed.client.Constants;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import java.util.Date;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OpenMRSOrder {
     public static final String ACTION_NEW = "NEW";
@@ -17,6 +19,7 @@ public class OpenMRSOrder {
     private String previousOrderUuid;
     private String commentToFulfiller;
     private String urgency;
+    private Date dateCreated;
 
     public String getUrgency() {
         return urgency;
@@ -127,6 +130,14 @@ public class OpenMRSOrder {
 
     public void setCommentToFulfiller(String commentToFulfiller) {
         this.commentToFulfiller = commentToFulfiller;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
 }
