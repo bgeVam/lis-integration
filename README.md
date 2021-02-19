@@ -60,16 +60,15 @@ git push origin some-random-issue
 ```
 Now visit https://gitlab.Example.com/YOUR USER/lis-integration/merge_requests/new?merge_request%5Bsource_branch%5D=some-random-issue
 
-#####< IMPORTANT >
+### IMPORTANT
 
-Atomfeed set the markers to first page if you don't set it. 
+For being able to contribute in this project you have to keep in mind that this repository is depended on **it-projects-market-Example-his-configured** image which is created automatically in the runner via running https://gitlab.Example.com/it-projects-market/Example-his
 
-So, Set the markers manually after provisioning and before deployment.
+Atomfeed set the markers to first page if you don't set it so: 
 
-Especially openmrs encounter feed as we are reading encounter feed to figure out the orders.
+ - Set the markers manually after provisioning and before deployment. Especially openmrs encounter feed as we are reading encounter feed to figure out the orders.
 
-Use the following sql query to set the markers manually according to the events in your machine. 
-(change the last_read_entry_id and feed_uri_for_last_read_entry )
-
-insert into markers (feed_uri, last_read_entry_id, feed_uri_for_last_read_entry) 
-    values ('http://loalhost:8080/openmrs/ws/atomfeed/encounter/recent', '?', '?');
+ - Use the following sql query to set the markers manually according to the events in your machine (change the last_read_entry_id and feed_uri_for_last_read_entry ).
+	```
+	insert into markers (feed_uri, last_read_entry_id, feed_uri_for_last_read_entry) values ('http://loalhost:8080/openmrs/ws/atomfeed/encounter/recent', '?', '?');
+	```
