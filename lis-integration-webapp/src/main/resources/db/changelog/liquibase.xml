@@ -182,4 +182,15 @@
             <column name="comment" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="LIS-202102221530" author="Shala, Albion">
+        <comment>Adding sample column to order table.</comment>
+        <addColumn tableName="test_order" schemaName="public">
+            <column name="sample" type="varchar(255)"/>
+        </addColumn>
+        <comment>Adding panel column to order table.</comment>
+        <addColumn tableName="test_order" schemaName="public">
+            <column name="panel" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
+
