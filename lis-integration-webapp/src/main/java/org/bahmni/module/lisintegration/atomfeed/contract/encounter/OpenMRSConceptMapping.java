@@ -4,6 +4,7 @@ public class OpenMRSConceptMapping {
     private String source;
     private String name;
     private String code;
+    private String conceptClass;
 
     public String getCode() {
         return code;
@@ -29,4 +30,11 @@ public class OpenMRSConceptMapping {
         this.source = source;
     }
 
+    public String getConceptClass() {
+        return conceptClass;
+    }
+
+    public void setConceptClass(String conceptClass) {
+        this.conceptClass = conceptClass;
+    }
 }

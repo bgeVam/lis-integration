@@ -45,9 +45,9 @@ public class HL7ServiceTest {
         Assert.assertTrue("HL7 Message control id should be less than 20 characters", messageControlID.length() <= 20);
     }
 
-    @Test(expected=HL7MessageException.class)
+    @Test(expected = HL7MessageException.class)
     public void testShouldThrowExceptionWhenThereIsNoLISConceptSource() throws DataTypeException {
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource("some source", "123")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource("some source", "123", "LabSet")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         List<OpenMRSProvider> providers = getProvidersData();
 
@@ -57,7 +57,7 @@ public class HL7ServiceTest {
 
     @Test
     public void testShouldCreateHL7Message() throws DataTypeException {
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         List<OpenMRSProvider> providers = getProvidersData();
 
@@ -72,7 +72,7 @@ public class HL7ServiceTest {
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
         Order previousOrder = new Order(111, null, "someOrderUuid", "someTestName", "someTestUuid", null, "ORD-111", "Comment");
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123")).withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest")).withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
         OpenMRSPatient patient = new OpenMRSPatient();
         List<OpenMRSProvider> providers = getProvidersData();
         when(orderRepository.findByOrderUuid(order.getPreviousOrderUuid())).thenReturn(previousOrder);
@@ -88,7 +88,7 @@ public class HL7ServiceTest {
     @Test(expected = HL7MessageException.class)
     public void testShouldThrowExceptionForOrderNumberWithSizeExceedingLimit() throws Exception {
 
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-11189067898900").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-11189067898900").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         List<OpenMRSProvider> providers = getProvidersData();
 
@@ -97,12 +97,13 @@ public class HL7ServiceTest {
     }
 
 
-    private OpenMRSConcept buildConceptWithSource(String conceptSourceName, String lisCode) {
+    private OpenMRSConcept buildConceptWithSource(String conceptClassName, String lisCode, String conceptClass) {
         final OpenMRSConceptMapping mapping = new OpenMRSConceptMapping();
         mapping.setCode(lisCode);
         mapping.setName(lisCode);
-        mapping.setSource(conceptSourceName);
-        return new OpenMRSConceptBuilder().addConceptMapping(mapping).addConceptName(lisCode).build();
+        mapping.setSource(conceptClassName);
+        mapping.setConceptClass(conceptClass);
+        return new OpenMRSConceptBuilder().addConceptMapping(mapping).addConceptName(lisCode).addConceptClass(conceptClass).build();
     }
 
     private List<OpenMRSProvider> getProvidersData() {

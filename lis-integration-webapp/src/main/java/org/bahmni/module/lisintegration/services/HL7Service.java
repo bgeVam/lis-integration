@@ -117,6 +117,10 @@ public class HL7Service {
         obr.getReasonForStudy(0).getText().setValue(order.getCommentToFulfiller());
         obr.getCollectorSComment(0).getText().setValue(order.getConcept().getName().getName());
         obr.getObr7_ObservationDateTime().getTime().setValue(order.getDateCreated());
+
+        if ("LabSet".equals(order.getConcept().getConceptClass())) {
+            obr.getCollectorSComment(0).getText().setValue("Observation Request is Panel Test");
+        }
     }
 
     private void addProviderDetails(List<OpenMRSProvider> providers, ORM_O01 message) throws DataTypeException {
