@@ -10,7 +10,7 @@ public class OpenMRSConcept {
     private OpenMRSConceptName name;
     private boolean set;
     private List<OpenMRSConceptMapping> mappings;
-
+    private String conceptClass;
 
     public OpenMRSConcept() {
     }
@@ -70,5 +70,13 @@ public class OpenMRSConcept {
     @Override
     public int hashCode() {
         return uuid.hashCode();
+    }
+
+    public String getConceptClass() {
+        return conceptClass;
+    }
+
+    public void setConceptClass(String conceptClass) {
+        this.conceptClass = conceptClass;
     }
 }
