@@ -23,6 +23,9 @@ public class Order extends BaseModel {
     @Column(name = "test_name", nullable = false)
     private String testName;
 
+    @Column(name = "test_panel", nullable = false)
+    private String testPanel;
+
     @Column(name = "test_uuid", unique = true, nullable = false)
     private String testUuid;
 
@@ -47,11 +50,12 @@ public class Order extends BaseModel {
     @Column(name = "comment")
     private String comment;
 
-    public Order(int id, OrderType orderType, String orderUuid, String testName, String testUuid, String result, String orderNumber, String comment) {
+    public Order(int id, OrderType orderType, String orderUuid, String testName, String testPanel, String testUuid, String result, String orderNumber, String comment) {
         this.id = id;
         this.orderType = orderType;
         this.orderUuid = orderUuid;
         this.testName = testName;
+        this.testPanel = testPanel;
         this.testUuid = testUuid;
         this.result = result;
         this.orderNumber = orderNumber;
@@ -99,6 +103,10 @@ public class Order extends BaseModel {
 
     public void setTestName(String testName) {
         this.testName = testName;
+    }
+
+    public void setTestPanelName(String testPanel) {
+        this.testPanel = testPanel;
     }
 
     public String getTestUuid() {
