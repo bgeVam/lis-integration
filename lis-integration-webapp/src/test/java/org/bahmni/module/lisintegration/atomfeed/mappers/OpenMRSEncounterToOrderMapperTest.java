@@ -28,26 +28,27 @@ public class OpenMRSEncounterToOrderMapperTest {
     }
 
     @Test
-    public void shouldMapOnlyRadiologyOpenMRSOrdersToOrders() throws Exception {
-        String testName = "Chest View";
+    public void shouldMapOnlyLabOpenMRSOrdersToOrders() throws Exception {
+        String testName = "MCV";
+        String testPanelName = "LabTest";
         String orderNumber = "ORD-001";
         String testUuid = "concept uuid";
-        String orderUuid = "radiology order uuid";
-        String providerName = "Aaditya Aaditya";
+        String orderUuid = "lab order uuid";
+        String providerName = "Albion Shala";
         OpenMRSConceptName conceptName = new OpenMRSConceptNameBuilder().withName(testName).build();
-        OpenMRSConcept concept = new OpenMRSConceptBuilder().withUuid(testUuid).withName(conceptName).build();
-        OpenMRSOrder radiologyOrder = new OpenMRSOrderBuilder().withOrderUuid(orderUuid).withOrderType("Radiology Order").withOrderNumber(orderNumber).withVoided(false).withConcept(concept).build();
-        OpenMRSOrder labOrder = new OpenMRSOrderBuilder().withOrderUuid("lab order uuid").withOrderType("Lab Order").withVoided(false).withConcept(concept).build();
+        OpenMRSConcept concept = new OpenMRSConceptBuilder().withUuid(testUuid).withName(conceptName).addConceptClass(testPanelName).build();
+        OpenMRSOrder labOrder = new OpenMRSOrderBuilder().withOrderUuid(orderUuid).withOrderType("Lab Order").withOrderNumber(orderNumber).withVoided(false).withConcept(concept).build();
+        OpenMRSOrder radiologyOrder = new OpenMRSOrderBuilder().withOrderUuid("radiology order uuid").withOrderType("Radiology Order").withVoided(false).withConcept(concept).build();
         OpenMRSProvider openMRSProvider = new OpenMRSProvider("provider-uuid", providerName);
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounterBuilder().withEncounterUuid("encounter uuid").withPatientUuid("patient uuid")
                 .withTestOrder(radiologyOrder).withTestOrder(labOrder).withProvider(openMRSProvider).build();
 
         ArrayList<OrderType> acceptableOrderTypes = new ArrayList<OrderType>();
-        acceptableOrderTypes.add(new OrderTypeBuilder().withName("Radiology Order").build());
+        acceptableOrderTypes.add(new OrderTypeBuilder().withName("Lab Order").build());
 
         when(orderRepository.findByOrderUuid(orderUuid)).thenReturn(null);
 
-        Order order = openMRSEncounterToOrderMapper.map(radiologyOrder, openMRSEncounter, acceptableOrderTypes);
+        Order order = openMRSEncounterToOrderMapper.map(labOrder, openMRSEncounter, acceptableOrderTypes);
 
         assertNotNull(order);
         assertEquals(orderNumber, order.getOrderNumber());

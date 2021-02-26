@@ -16,7 +16,12 @@ public class OpenMRSEncounterToOrderMapper {
         Order order = new Order();
         order.setOrderNumber(openMRSOrder.getOrderNumber());
         order.setOrderUuid(openMRSOrder.getUuid());
-        order.setTestName(openMRSOrder.getConcept().getName().getName());
+        if ("LabTest".equals(openMRSOrder.getConcept().getConceptClass())) {
+            order.setTestName(openMRSOrder.getConcept().getName().getName());
+        }
+        if ("LabSet".equals(openMRSOrder.getConcept().getConceptClass())) {
+            order.setTestPanelName(openMRSOrder.getConcept().getName().getName());
+        }
         order.setTestUuid(openMRSOrder.getConcept().getUuid());
         order.setOrderType(findOrderType(orderTypes, openMRSOrder.getOrderType()));
         order.setDateCreated(openMRSOrder.getDateCreated());

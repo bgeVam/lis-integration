@@ -195,5 +195,8 @@
     <changeSet id="LIS-202102251630" author="Shala, Albion">
         <renameColumn newColumnName="test_panel" oldColumnName="panel" tableName="test_order"/>
     </changeSet>
+    <changeSet id="LIS-202102251730" author="Shala, Albion">
+        <dropNotNullConstraint columnName="test_name" tableName="test_order"/>
+    </changeSet>
 </databaseChangeLog>
 
