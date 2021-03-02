@@ -3,8 +3,10 @@ package org.bahmni.module.lisintegration.services;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.v25.message.ADR_A19;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterToOrderMapper;
 import org.bahmni.module.lisintegration.model.Order;
@@ -53,6 +55,9 @@ public class LisIntegrationServiceTest {
     @Mock
     private HL7Service hl7Service;
 
+    @Mock
+    private OpenMRSConcept openMRSConcept;
+
     @Mock ADR_A19 adr_a19;
 
     @Mock
@@ -72,8 +77,10 @@ public class LisIntegrationServiceTest {
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByOrderUuid(any(String.class))).thenReturn(null);
-        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(OpenMRSPatient.class), any(List.class))).thenReturn(adr_a19);
+        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class), any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
+        when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");
+        when(openMRSService.getSample("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb")).thenReturn(new Sample());
 
         lisIntegrationService.processEncounter(encounter);
 
@@ -87,8 +94,10 @@ public class LisIntegrationServiceTest {
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByOrderUuid(any(String.class))).thenReturn(null).thenReturn(new Order());
-        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(OpenMRSPatient.class), any(List.class))).thenReturn(adr_a19);
+        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class), any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
+        when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");
+        when(openMRSService.getSample("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb")).thenReturn(new Sample());
 
         lisIntegrationService.processEncounter(encounter);
 
@@ -99,8 +108,10 @@ public class LisIntegrationServiceTest {
     OpenMRSEncounter buildEncounter() {
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounter();
         openMRSEncounter.setPatientUuid(PATIENT_UUID);
-        OpenMRSOrder order1 = new OpenMRSOrder("uuid1", "type1", null, false, null, null);
-        OpenMRSOrder order2 = new OpenMRSOrder("uuid2", "type2", null, false, null, null);
+        OpenMRSConcept concept = new OpenMRSConcept();
+        concept.setUuid("f5774c43-1e4c-46fa-a06a-4e2c684b154c");
+        OpenMRSOrder order1 = new OpenMRSOrder("uuid1", "type1", concept, false, null, null);
+        OpenMRSOrder order2 = new OpenMRSOrder("uuid2", "type2", concept, false, null, null);
         openMRSEncounter.setOrders(Arrays.asList(order1, order2));
         return openMRSEncounter;
     }

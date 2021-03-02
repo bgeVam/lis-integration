@@ -49,6 +49,7 @@ public class EncounterFeedWorkerIT extends BaseIntegrationTest {
         when(WebClientFactory.getClient()).thenReturn(webClient);
         when(webClient.get(new URI("http://localhost:8050/encounter/1"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/sampleOpenMRSEncounter.json"));
         when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/patient/105059a8-5226-4b1f-b512-0d3ae685287d?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/samplePatient.json"));
+        when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/sampleLabSamplesConcept.json"));
     }
 
     @Test

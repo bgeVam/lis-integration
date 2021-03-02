@@ -2,16 +2,16 @@ package org.bahmni.module.lisintegration.atomfeed.mappers;
 
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.model.Order;
 import org.bahmni.module.lisintegration.model.OrderType;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 @Component
 public class OpenMRSEncounterToOrderMapper {
-    public Order map(OpenMRSOrder openMRSOrder, OpenMRSEncounter openMRSEncounter, List<OrderType> orderTypes) {
+    public Order map(OpenMRSOrder openMRSOrder, OpenMRSEncounter openMRSEncounter, Sample sample, List<OrderType> orderTypes) {
         String providerName = getProviderName(openMRSEncounter);
         Order order = new Order();
         order.setOrderNumber(openMRSOrder.getOrderNumber());
@@ -27,6 +27,7 @@ public class OpenMRSEncounterToOrderMapper {
         order.setDateCreated(openMRSOrder.getDateCreated());
         order.setCreator(providerName);
         order.setComment(openMRSOrder.getCommentToFulfiller());
+        order.setSample(sample.getName());
         return order;
     }
 

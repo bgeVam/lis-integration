@@ -1,0 +1,315 @@
+{
+  "uuid": "8160a011-3f10-11e4-adec-0800271c1b75",
+  "display": "Lab Samples",
+  "name": {
+    "display": "Lab Samples",
+    "uuid": "81615942-3f10-11e4-adec-0800271c1b75",
+    "name": "Lab Samples",
+    "locale": "en",
+    "localePreferred": true,
+    "conceptNameType": "FULLY_SPECIFIED",
+    "links": [
+      {
+        "rel": "self",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/81615942-3f10-11e4-adec-0800271c1b75"
+      },
+      {
+        "rel": "full",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/81615942-3f10-11e4-adec-0800271c1b75?v=full"
+      }
+    ],
+    "resourceVersion": "1.9"
+  },
+  "datatype": {
+    "uuid": "8d4a4c94-c2cc-11de-8d13-0010c6dffd0f",
+    "display": "N/A",
+    "name": "N/A",
+    "description": "Not associated with a datatype (e.g., term answers, sets)",
+    "hl7Abbreviation": "ZZ",
+    "retired": false,
+    "links": [
+      {
+        "rel": "self",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptdatatype/8d4a4c94-c2cc-11de-8d13-0010c6dffd0f"
+      },
+      {
+        "rel": "full",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptdatatype/8d4a4c94-c2cc-11de-8d13-0010c6dffd0f?v=full"
+      }
+    ],
+    "resourceVersion": "1.8"
+  },
+  "conceptClass": {
+    "uuid": "8d492774-c2cc-11de-8d13-0010c6dffd0f",
+    "display": "Misc",
+    "name": "Misc",
+    "description": "Terms which don't fit other categories",
+    "retired": false,
+    "links": [
+      {
+        "rel": "self",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptclass/8d492774-c2cc-11de-8d13-0010c6dffd0f"
+      },
+      {
+        "rel": "full",
+        "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptclass/8d492774-c2cc-11de-8d13-0010c6dffd0f?v=full"
+      }
+    ],
+    "resourceVersion": "1.8"
+  },
+  "set": true,
+  "version": null,
+  "retired": false,
+  "names": [
+    {
+      "display": "Lab Samples",
+      "uuid": "81615942-3f10-11e4-adec-0800271c1b75",
+      "name": "Lab Samples",
+      "locale": "en",
+      "localePreferred": true,
+      "conceptNameType": "FULLY_SPECIFIED",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/81615942-3f10-11e4-adec-0800271c1b75"
+        },
+        {
+          "rel": "full",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/81615942-3f10-11e4-adec-0800271c1b75?v=full"
+        }
+      ],
+      "resourceVersion": "1.9"
+    },
+    {
+      "display": "Laboratory",
+      "uuid": "b3e0b2a3-fdea-11e4-b248-005056820298",
+      "name": "Laboratory",
+      "locale": "en",
+      "localePreferred": false,
+      "conceptNameType": "SHORT",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/b3e0b2a3-fdea-11e4-b248-005056820298"
+        },
+        {
+          "rel": "full",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75/name/b3e0b2a3-fdea-11e4-b248-005056820298?v=full"
+        }
+      ],
+      "resourceVersion": "1.9"
+    }
+  ],
+  "descriptions": [],
+  "mappings": [],
+  "answers": [],
+  "setMembers": [
+    {
+      "uuid": "ee1e1347-da2c-4c95-84dd-588056b79c3a",
+      "display": "Blood",
+      "name": {
+        "display": "Blood",
+        "uuid": "2cbba3cd-4ba8-40eb-b528-16c9ffb304f2",
+        "name": "Blood",
+        "locale": "en",
+        "localePreferred": true,
+        "conceptNameType": "FULLY_SPECIFIED",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ee1e1347-da2c-4c95-84dd-588056b79c3a/name/2cbba3cd-4ba8-40eb-b528-16c9ffb304f2"
+          },
+          {
+            "rel": "full",
+            "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ee1e1347-da2c-4c95-84dd-588056b79c3a/name/2cbba3cd-4ba8-40eb-b528-16c9ffb304f2?v=full"
+          }
+        ],
+        "resourceVersion": "1.9"
+      },
+      "datatype": {
+        "uuid": "8d4a4c94-c2cc-11de-8d13-0010c6dffd0f",
+        "display": "N/A",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptdatatype/8d4a4c94-c2cc-11de-8d13-0010c6dffd0f"
+          }
+        ]
+      },
+      "conceptClass": {
+        "uuid": "0fb09bcb-47c6-11e4-8125-0800271c1b75",
+        "display": "Sample",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://localhost:8252/openmrs/ws/rest/v1/conceptclass/0fb09bcb-47c6-11e4-8125-0800271c1b75"
+          }
+        ]
+      },
+      "set": true,
+      "version": null,
+      "retired": false,
+      "names": [
+        {
+          "uuid": "2cbba3cd-4ba8-40eb-b528-16c9ffb304f2",
+          "display": "Blood",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ee1e1347-da2c-4c95-84dd-588056b79c3a/name/2cbba3cd-4ba8-40eb-b528-16c9ffb304f2"
+            }
+          ]
+        }
+      ],
+      "descriptions": [],
+      "mappings": [],
+      "answers": [],
+      "setMembers": [
+        {
+          "uuid": "ecdf7468-3829-4077-b7f9-de6f011128af",
+          "display": "Leukocytes",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ecdf7468-3829-4077-b7f9-de6f011128af"
+            }
+          ]
+        },
+        {
+          "uuid": "f5774c43-1e4c-46fa-a06a-4e2c684b154c",
+          "display": "Hemogram without Platelets",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/f5774c43-1e4c-46fa-a06a-4e2c684b154c"
+            }
+          ]
+        },
+        {
+          "uuid": "3059aa72-48d2-454f-b5e3-6fc45a336f91",
+          "display": "Erythrocyte distribution width [Ratio]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/3059aa72-48d2-454f-b5e3-6fc45a336f91"
+            }
+          ]
+        },
+        {
+          "uuid": "62d5212e-a32e-4436-bbe9-29ed416990fb",
+          "display": "Erythrocytes",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/62d5212e-a32e-4436-bbe9-29ed416990fb"
+            }
+          ]
+        },
+        {
+          "uuid": "9e520c46-0468-457d-887a-e5a8efd43109",
+          "display": "Hemoglobin [Mass/volume]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/9e520c46-0468-457d-887a-e5a8efd43109"
+            }
+          ]
+        },
+        {
+          "uuid": "4dde0fda-0848-4cc5-92bb-b15246969a51",
+          "display": "Hematocrit [Volume Fraction]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/4dde0fda-0848-4cc5-92bb-b15246969a51"
+            }
+          ]
+        },
+        {
+          "uuid": "df986e9a-9f44-431c-b496-5ee6cdb75301",
+          "display": "MCV [Entitic volume]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/df986e9a-9f44-431c-b496-5ee6cdb75301"
+            }
+          ]
+        },
+        {
+          "uuid": "ed5d8f79-6f3c-48ed-85ed-afe81abd2484",
+          "display": "MCH [Entitic mass]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ed5d8f79-6f3c-48ed-85ed-afe81abd2484"
+            }
+          ]
+        },
+        {
+          "uuid": "df690683-e2cd-48ac-bf7d-539e6814a243",
+          "display": "MCHC [Mass/volume]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/df690683-e2cd-48ac-bf7d-539e6814a243"
+            }
+          ]
+        },
+        {
+          "uuid": "3f2664d5-6ba0-4f3a-9711-37786015362d",
+          "display": "Erythrocyte distribution width [Entitic volume]",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/3f2664d5-6ba0-4f3a-9711-37786015362d"
+            }
+          ]
+        }
+      ],
+      "attributes": [],
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ee1e1347-da2c-4c95-84dd-588056b79c3a"
+        },
+        {
+          "rel": "full",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/ee1e1347-da2c-4c95-84dd-588056b79c3a?v=full"
+        }
+      ],
+      "resourceVersion": "2.0"
+    }
+  ],
+  "auditInfo": {
+    "creator": {
+      "uuid": "62a3b753-3f10-11e4-adec-0800271c1b75",
+      "display": "admin",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/user/62a3b753-3f10-11e4-adec-0800271c1b75"
+        }
+      ]
+    },
+    "dateCreated": "2013-07-23T11:26:35.000+0000",
+    "changedBy": {
+      "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75",
+      "display": "superman",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://localhost:8252/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
+        }
+      ]
+    },
+    "dateChanged": "2021-03-01T14:40:20.000+0000"
+  },
+  "attributes": [],
+  "links": [
+    {
+      "rel": "self",
+      "uri": "http://localhost:8252/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75"
+    }
+  ],
+  "resourceVersion": "2.0"
+}

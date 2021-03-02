@@ -50,6 +50,9 @@ public class Order extends BaseModel {
     @Column(name = "comment")
     private String comment;
 
+    @Column(name = "sample")
+    private  String sample;
+
     public Order(int id, OrderType orderType, String orderUuid, String testName, String testPanel, String testUuid, String result, String orderNumber, String comment) {
         this.id = id;
         this.orderType = orderType;
@@ -163,5 +166,13 @@ public class Order extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getSample() {
+        return sample;
+    }
+
+    public void setSample(String sample) {
+        this.sample = sample;
     }
 }

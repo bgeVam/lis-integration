@@ -3,8 +3,10 @@ package org.bahmni.module.lisintegration.services;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.AbstractMessage;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterToOrderMapper;
 import org.bahmni.module.lisintegration.model.Order;
@@ -53,9 +55,11 @@ public class LisIntegrationService {
         Collections.reverse(newAcceptableTestOrders);
         for(OpenMRSOrder openMRSOrder : newAcceptableTestOrders) {
             if(orderRepository.findByOrderUuid(openMRSOrder.getUuid()) == null) {
-                AbstractMessage request = hl7Service.createMessage(openMRSOrder, patient, openMRSEncounter.getProviders());
+                OpenMRSConcept openMRSConcept = openMRSOrder.getConcept();
+                Sample sample = openMRSService.getSample(openMRSConcept.getUuid());
+                AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient, openMRSEncounter.getProviders());
                 String response = lisService.sendMessage(request, openMRSOrder.getOrderType());
-                Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, acceptableOrderTypes);
+                Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample, acceptableOrderTypes);
 
                 orderRepository.save(order);
                 orderDetailsRepository.save(new OrderDetails(order, request.encode(),response));
