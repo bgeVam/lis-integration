@@ -3,6 +3,7 @@ package org.bahmni.module.lisintegration.atomfeed.worker;
 import org.bahmni.module.lisintegration.atomfeed.OpenMRSMapperBaseTest;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.services.OpenMRSService;
 import org.bahmni.module.lisintegration.services.LisIntegrationService;
 import org.ict4h.atomfeed.client.domain.Event;
@@ -35,10 +36,13 @@ public class EncounterFeedWorkerTest extends OpenMRSMapperBaseTest {
     @Test
     public void shouldGetEncounterDataFromTheEventContentAndSaveIt() throws Exception {
         String content = "/openmrs/encounter/uuid1";
+        String sampleName = "Blood";
         OpenMRSOrder order = new OpenMRSOrder();
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounter();
         openMRSEncounter.addTestOrder(order);
         when(openMRSService.getEncounter(content)).thenReturn(openMRSEncounter);
+        Sample sample = new Sample();
+        sample.setName(sampleName);
 
         encounterFeedWorker.process(new Event("event id", content));
 
@@ -50,6 +54,8 @@ public class EncounterFeedWorkerTest extends OpenMRSMapperBaseTest {
         String content = "/openmrs/encounter/uuid1";
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounter();
         when(openMRSService.getEncounter(content)).thenReturn(openMRSEncounter);
+        Sample sample = new Sample();
+        when(openMRSService.getSample("UUID")).thenReturn(sample);
 
         encounterFeedWorker.process(new Event("event id", content));
 
@@ -67,9 +73,12 @@ public class EncounterFeedWorkerTest extends OpenMRSMapperBaseTest {
     @Test
     public void shouldFilterOutBedAssignmentEventsBeforeProcessing() throws Exception {
         String content = "/openmrs/encounter/uuid1";
+        String sampleName = "Blood";
         OpenMRSOrder order = new OpenMRSOrder();
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounter();
         openMRSEncounter.addTestOrder(order);
+        Sample sample = new Sample();
+        sample.setName(sampleName);
 
         encounterFeedWorker.process(new Event("event id", content, "Bed-Assignment"));
 

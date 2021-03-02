@@ -35,6 +35,7 @@ public class OpenMRSEncounterToOrderMapperTest {
         String testUuid = "concept uuid";
         String orderUuid = "lab order uuid";
         String providerName = "Albion Shala";
+        String sampleName = "Blood";
         OpenMRSConceptName conceptName = new OpenMRSConceptNameBuilder().withName(testName).build();
         OpenMRSConcept concept = new OpenMRSConceptBuilder().withUuid(testUuid).withName(conceptName).addConceptClass(testPanelName).build();
         OpenMRSOrder labOrder = new OpenMRSOrderBuilder().withOrderUuid(orderUuid).withOrderType("Lab Order").withOrderNumber(orderNumber).withVoided(false).withConcept(concept).build();
@@ -42,13 +43,14 @@ public class OpenMRSEncounterToOrderMapperTest {
         OpenMRSProvider openMRSProvider = new OpenMRSProvider("provider-uuid", providerName);
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounterBuilder().withEncounterUuid("encounter uuid").withPatientUuid("patient uuid")
                 .withTestOrder(radiologyOrder).withTestOrder(labOrder).withProvider(openMRSProvider).build();
+        Sample sample = new SampleBuilder().withDisplay(sampleName).build();
 
         ArrayList<OrderType> acceptableOrderTypes = new ArrayList<OrderType>();
         acceptableOrderTypes.add(new OrderTypeBuilder().withName("Lab Order").build());
 
         when(orderRepository.findByOrderUuid(orderUuid)).thenReturn(null);
 
-        Order order = openMRSEncounterToOrderMapper.map(labOrder, openMRSEncounter, acceptableOrderTypes);
+        Order order = openMRSEncounterToOrderMapper.map(labOrder, openMRSEncounter, sample, acceptableOrderTypes);
 
         assertNotNull(order);
         assertEquals(orderNumber, order.getOrderNumber());

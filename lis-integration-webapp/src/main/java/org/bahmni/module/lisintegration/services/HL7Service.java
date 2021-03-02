@@ -8,6 +8,7 @@ import ca.uhn.hl7v2.model.v25.segment.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptMapping;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.exception.HL7MessageException;
 import org.bahmni.module.lisintegration.model.Order;
@@ -38,15 +39,15 @@ public class HL7Service {
     private final String CANCEL_ORDER = "CA";
     private final String SENDER = "BahmniEMR";
 
-    public AbstractMessage createMessage(OpenMRSOrder order, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
+    public AbstractMessage createMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
         if(order.isDiscontinued()) {
-            return cancelOrderMessage(order, openMRSPatient, providers);
+            return cancelOrderMessage(order, sample, openMRSPatient, providers);
         } else {
-            return createOrderMessage(order, openMRSPatient, providers);
+            return createOrderMessage(order, sample, openMRSPatient, providers);
         }
     }
 
-    private AbstractMessage createOrderMessage(OpenMRSOrder order, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
+    private AbstractMessage createOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
@@ -64,7 +65,7 @@ public class HL7Service {
         orc.getEnteredBy(0).getGivenName().setValue(SENDER);
         orc.getOrderControl().setValue(NEW_ORDER);
 
-        addOBRComponent(order, message);
+        addOBRComponent(order, sample, message);
         return message;
     }
 
@@ -72,7 +73,7 @@ public class HL7Service {
         return orderNumber.getBytes().length > 16;
     }
 
-    private AbstractMessage cancelOrderMessage(OpenMRSOrder order, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
+    private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
         Order previousOrder = orderRepository.findByOrderUuid(order.getPreviousOrderUuid());
         if(previousOrder == null) {
             throw  new HL7MessageException("Unable to Cancel the Order. Previous order is not found" + order.getOrderNumber());
@@ -93,7 +94,7 @@ public class HL7Service {
         orc.getEnteredBy(0).getGivenName().setValue(SENDER);
         orc.getOrderControl().setValue(CANCEL_ORDER);
 
-        addOBRComponent(order, message);
+        addOBRComponent(order, sample, message);
         return message;
     }
 
@@ -104,7 +105,7 @@ public class HL7Service {
         populateMessageHeader(msh, new Date(), "ORM", "O01", SENDER);
     }
 
-    private void addOBRComponent(OpenMRSOrder order, ORM_O01 message) throws DataTypeException {
+    private void addOBRComponent(OpenMRSOrder order, Sample sample, ORM_O01 message) throws DataTypeException {
         // handle OBR component
         OBR obr = message.getORDER().getORDER_DETAIL().getOBR();
 
@@ -117,6 +118,7 @@ public class HL7Service {
         obr.getReasonForStudy(0).getText().setValue(order.getCommentToFulfiller());
         obr.getCollectorSComment(0).getText().setValue(order.getConcept().getName().getName());
         obr.getObr7_ObservationDateTime().getTime().setValue(order.getDateCreated());
+        obr.getSpecimenSource().getSpecimenSourceNameOrCode().getText().setValue(sample.getName());
 
         if ("LabSet".equals(order.getConcept().getConceptClass())) {
             obr.getCollectorSComment(0).getText().setValue("Observation Request is Panel Test");

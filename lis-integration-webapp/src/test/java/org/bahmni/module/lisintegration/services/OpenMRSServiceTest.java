@@ -1,6 +1,5 @@
 package org.bahmni.module.lisintegration.services;
 
-import junit.framework.Assert;
 import org.bahmni.module.lisintegration.atomfeed.*;
 import org.bahmni.module.lisintegration.atomfeed.client.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.*;
@@ -14,9 +13,7 @@ import org.powermock.api.mockito.*;
 import org.powermock.core.classloader.annotations.*;
 import org.powermock.modules.junit4.*;
 
-import java.io.*;
 import java.net.*;
-import java.text.*;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -65,5 +62,19 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
 
         assertEquals(identifier, patient.getPatientId());
 
+    }
+
+    @Test
+    public void ShouldGetSample() throws Exception{
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/sampleLabSamplesConcept.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/sampleLabSamplesConcept.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        Sample sample = new OpenMRSService().getSample("f5774c43-1e4c-46fa-a06a-4e2c684b154c");
+
+        assertEquals("Blood", sample.getName());
     }
 }
