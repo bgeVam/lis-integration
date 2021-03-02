@@ -38,6 +38,7 @@ public class HL7Service {
     private final String NEW_ORDER = "NW";
     private final String CANCEL_ORDER = "CA";
     private final String SENDER = "BahmniEMR";
+    private final String EMAIL = "root@Example-lis.com";
 
     public AbstractMessage createMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
         if(order.isDiscontinued()) {
@@ -130,6 +131,7 @@ public class HL7Service {
         ORC orc = message.getORDER().getORC();
         orc.getOrderingProvider(0).getGivenName().setValue(openMRSProvider.getName());
         orc.getOrderingProvider(0).getIDNumber().setValue(openMRSProvider.getUuid());
+        orc.getCallBackPhoneNumber(0).getEmailAddress().setValue(EMAIL);
     }
 
     private void addPatientDetails(ORM_O01 message, OpenMRSPatient openMRSPatient) throws DataTypeException {
