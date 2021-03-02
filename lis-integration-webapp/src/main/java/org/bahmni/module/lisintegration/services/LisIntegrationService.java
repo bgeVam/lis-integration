@@ -15,6 +15,7 @@ import org.bahmni.module.lisintegration.repository.OrderRepository;
 import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,6 +24,10 @@ import java.util.List;
 
 @Component
 public class LisIntegrationService {
+    private static final org.apache.log4j.Logger log = Logger.getLogger(LisIntegrationService.class);
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
 
     @Autowired
     private OpenMRSEncounterToOrderMapper openMRSEncounterToOrderMapper;
@@ -42,8 +47,19 @@ public class LisIntegrationService {
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
 
-    @Autowired
     private LisService lisService;
+
+    @Autowired
+    public void setLisService(LisService lisService){
+        this.lisService = lisService;
+        try {
+            log.info(ANSI_GREEN + " Server is starting..." + ANSI_RESET);
+            lisService.startServer();
+            log.info(ANSI_GREEN + "Server has been started..." + ANSI_RESET);
+        } catch (Exception e) {
+            log.error(ANSI_RED + "An error has occurred..." + ANSI_RESET);
+        }
+    }
 
     public void processEncounter(OpenMRSEncounter openMRSEncounter) throws IOException, ParseException, HL7Exception, LLPException {
         OpenMRSPatient patient = openMRSService.getPatient(openMRSEncounter.getPatientUuid());
