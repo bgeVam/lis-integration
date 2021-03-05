@@ -21,6 +21,7 @@ import static org.mockito.MockitoAnnotations.*;
 
 @PrepareForTest(WebClientFactory.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("jdk.internal.reflect.*")
 public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
 
     @Mock
