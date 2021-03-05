@@ -1,3 +1,10 @@
 .idea/
 *.iml
 target/
+.vscode/
+.classpath
+.project
+id_file
+.settings/
+lis-integration-webapp/.factorypath
+pacs-integration-webapp/.factorypath

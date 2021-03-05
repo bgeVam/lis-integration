@@ -16,11 +16,27 @@ import org.bahmni.module.lisintegration.model.Lis;
 import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ca.uhn.hl7v2.app.ConnectionHub;
+import ca.uhn.hl7v2.app.ConnectionListener;
+import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.util.idgenerator.UUIDGenerator;
+import org.apache.log4j.Logger;
+import ca.uhn.hl7v2.model.v25.group.ORM_O01_PATIENT;
+import ca.uhn.hl7v2.model.v25.segment.*;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Component
 public class LisService {
+    private static final org.apache.log4j.Logger log = Logger.getLogger(LisService.class);
+
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String host = "localhost";
+    public static final Integer port = 8055;
 
     @Autowired
     private OrderTypeRepository orderTypeRepository;
@@ -68,4 +84,28 @@ public class LisService {
             throw new LisException(responseMessage, lis);
         }
     }
+
+    public void startServer() throws InterruptedException {
+        HapiContext hapiContext = new DefaultHapiContext();
+        HL7Service server = hapiContext.newServer(port, false);
+        server.registerApplication("ORU", "R01", new ORUHandler());
+        server.setExceptionHandler(new ErrorHandler());
+        server.registerConnectionListener(
+            new ConnectionListener() {
+                @Override
+                public void connectionReceived(Connection connection) {
+                    log.info("New connection received: " + connection.getRemoteAddress().toString());
+                }
+
+                @Override
+                public void connectionDiscarded(Connection connection) {
+                    log.info("Lost connection from: " + connection.getRemoteAddress().toString());
+                }
+            });
+        server.startAndWait();
+        System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(300000));
+
+        log.info("Started server at " + host + ":" + port + " with timeout of " + 300000);
+    }
+
 }
