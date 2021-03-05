@@ -11,6 +11,7 @@ public class OpenMRSEncounter {
     private String encounterUuid;
     private String patientUuid;
     private List<OpenMRSOrder> orders = new ArrayList<OpenMRSOrder>();
+    private List<OpenMRSObs> obs = new ArrayList<OpenMRSObs>();
     private List<OpenMRSProvider> providers = new ArrayList<OpenMRSProvider>();
 
     public OpenMRSEncounter() {
@@ -65,6 +66,14 @@ public class OpenMRSEncounter {
 
     public void setProviders(List<OpenMRSProvider> providers) {
         this.providers = providers;
+    }
+
+    public List<OpenMRSObs> getObs() {
+        return obs;
+    }
+
+    public void setObs(List<OpenMRSObs> obs) {
+        this.obs = obs;
     }
 
     public void addTestOrder(OpenMRSOrder order) {

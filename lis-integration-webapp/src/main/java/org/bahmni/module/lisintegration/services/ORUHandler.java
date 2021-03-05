@@ -7,6 +7,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.apache.log4j.Logger;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
+import org.bahmni.module.lisintegration.atomfeed.mappers.HL7ORUtoOpenMRSEncounterMapper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,7 +27,9 @@ public class ORUHandler implements ReceivingApplication {
             String encodedMessage = new PipeParser().encode(message);
             log.info("Received message:\n" + encodedMessage + "\n\n");
             
-            // TODO Insert Observation OpenMRSEncounter here
+            HL7ORUtoOpenMRSEncounterMapper mapper = new HL7ORUtoOpenMRSEncounterMapper();
+            OpenMRSEncounter openMRSEncounter = new HL7ORUtoOpenMRSEncounterMapper().map(oruR01);
+            //Update all uuid information in the encounter
 
             return message.generateACK();
         } catch(Throwable t) {
