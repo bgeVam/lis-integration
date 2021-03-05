@@ -25,3 +25,14 @@ For Senaite required fields are:
 #### Not supported messages
 `HL7/ORM-O01/not-supported-messages` contains messages which must not be produced by lis-integration.
 These can also be use for negative testing if needed, especially on the target e.g. LIS.
+
+### ORU-R01
+
+#### One single test result message
+`HL7/ORU-R01/one-single-test-result.hl7` contains results for one single test. 
+
+#### One panel test result message
+`HL7/ORU-R01/one-panel-test-result.hl7` contains results for one panel test.
+
+#### Result Message with PDF report
+`HL7/ORU-R01/test-result-with-pdf.hl7` contains results also with a pdf report included.
