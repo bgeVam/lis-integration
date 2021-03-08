@@ -13,6 +13,9 @@ public class OpenMRSEncounter {
     private List<OpenMRSOrder> orders = new ArrayList<OpenMRSOrder>();
     private List<OpenMRSObs> obs = new ArrayList<OpenMRSObs>();
     private List<OpenMRSProvider> providers = new ArrayList<OpenMRSProvider>();
+    private String encounterType;
+    private String encounterRole;
+    private Visit visit;
 
     public OpenMRSEncounter() {
     }
@@ -91,5 +94,29 @@ public class OpenMRSEncounter {
 
     public boolean hasOrders() {
         return getOrders().size() > 0;
+    }
+
+    public String getEncounterType() {
+        return encounterType;
+    }
+
+    public void setEncounterType(String encounterType) {
+        this.encounterType = encounterType;
+    }
+
+    public String getEncounterRole() {
+        return encounterRole;
+    }
+
+    public void setEncounterRole(String encounterRole) {
+        this.encounterRole = encounterRole;
+    }
+
+    public Visit getVisit() {
+        return visit;
+    }
+
+    public void setVisit(Visit visit) {
+        this.visit = visit;
     }
 }

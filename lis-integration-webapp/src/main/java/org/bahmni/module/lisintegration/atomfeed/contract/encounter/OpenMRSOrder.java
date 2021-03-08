@@ -1,6 +1,7 @@
 package org.bahmni.module.lisintegration.atomfeed.contract.encounter;
 
 import org.bahmni.module.lisintegration.atomfeed.client.Constants;
+import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -20,6 +21,8 @@ public class OpenMRSOrder {
     private String commentToFulfiller;
     private String urgency;
     private Date dateCreated;
+    private OpenMRSPatient patient;
+    private OpenMRSEncounter encounter;
 
     public String getUrgency() {
         return urgency;
@@ -140,4 +143,19 @@ public class OpenMRSOrder {
         this.dateCreated = dateCreated;
     }
 
+    public OpenMRSPatient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(OpenMRSPatient patient) {
+        this.patient = patient;
+    }
+
+    public OpenMRSEncounter getEncounter() {
+        return encounter;
+    }
+
+    public void setEncounter(OpenMRSEncounter encounter) {
+        this.encounter = encounter;
+    }
 }

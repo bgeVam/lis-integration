@@ -37,7 +37,7 @@ public class HL7ORUtoOpenMRSEncounterMapper {
                 ORC orc = orderObservation.getORC();
                 String fillerOrderNumber = orc.getFillerOrderNumber().getEntityIdentifier().getValue();
                 OpenMRSOrder order = new OpenMRSOrder();
-                order.setOrderNumber(fillerOrderNumber);
+                order.setUuid(fillerOrderNumber);
                 result.setOrders(Arrays.asList(order));
 
                 for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
