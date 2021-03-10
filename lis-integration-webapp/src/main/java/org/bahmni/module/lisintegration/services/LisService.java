@@ -14,7 +14,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import org.bahmni.module.lisintegration.exception.LisException;
 import org.bahmni.module.lisintegration.model.Lis;
 import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.ConnectionListener;
@@ -33,10 +33,20 @@ import java.util.Date;
 public class LisService {
     private static final org.apache.log4j.Logger log = Logger.getLogger(LisService.class);
 
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String host = "localhost";
-    public static final Integer port = 8055;
+    @Value("${green.letters}")
+    private String printGreen;
+
+    @Value("${red.letters}")
+    private String printRed;
+
+    @Value("${default.letters}")
+    private String printDefault;
+
+    @Value("${lis.host}")
+    private String host;
+
+    @Value("${lis.port}")
+    private Integer port;
 
     @Autowired
     private OrderTypeRepository orderTypeRepository;
@@ -94,18 +104,18 @@ public class LisService {
             new ConnectionListener() {
                 @Override
                 public void connectionReceived(Connection connection) {
-                    log.info("New connection received: " + connection.getRemoteAddress().toString());
+                    log.info(printGreen + "New connection received: " + connection.getRemoteAddress().toString() + printDefault);
                 }
 
                 @Override
                 public void connectionDiscarded(Connection connection) {
-                    log.info("Lost connection from: " + connection.getRemoteAddress().toString());
+                    log.info(printRed + "Lost connection from: " + connection.getRemoteAddress().toString() + printDefault);
                 }
             });
         server.startAndWait();
         System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(300000));
 
-        log.info("Started server at " + host + ":" + port + " with timeout of " + 300000);
+        log.info(printGreen + "Started server at " + host + ":" + port + " with timeout of " + 300000 + printDefault);
     }
 
 }
