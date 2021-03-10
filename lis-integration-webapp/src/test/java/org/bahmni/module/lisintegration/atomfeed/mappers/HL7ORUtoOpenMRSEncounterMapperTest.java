@@ -18,7 +18,7 @@ public class HL7ORUtoOpenMRSEncounterMapperTest extends OpenMRSMapperBaseTest {
     @Test
     public void testMapWithSingleTestResultORUMessage() throws HL7Exception, IOException, ParseException {
         String msg1 = "MSH|^~\\&||LIS^Laboratory|BahmniEMR|BahmniEMR|||ORU^R01^ORU_R01||P|2.5\r"
-                + "ORC|RE|ORD-111|ORD-111\r" + "OBR|1|Absolute Eosinphil Count\r"
+                + "ORC|RE|6b519258-c97b-4c6b-891b-e6f478123cbb|6b519258-c97b-4c6b-891b-e6f478123cbb\r" + "OBR|1|Absolute Eosinphil Count\r"
                 + "OBX|1|NM|^Absolute Eosinphil Count||55|||||||||20210303144943";
 
         PipeParser pipeParser = new PipeParser();
@@ -28,7 +28,7 @@ public class HL7ORUtoOpenMRSEncounterMapperTest extends OpenMRSMapperBaseTest {
 
         HL7ORUtoOpenMRSEncounterMapper hl7 = new HL7ORUtoOpenMRSEncounterMapper();
         OpenMRSEncounter openMRSEncounter = hl7.map(oru);
-        Assert.assertEquals("ORD-111", openMRSEncounter.getOrders().get(0).getOrderNumber());
+        Assert.assertEquals("6b519258-c97b-4c6b-891b-e6f478123cbb", openMRSEncounter.getOrders().get(0).getUuid());
         Assert.assertEquals((Double) 55.0, openMRSEncounter.getObs().get(0).getGroupMembers().get(0).getValue());
         Assert.assertEquals("Absolute Eosinphil Count",
                 openMRSEncounter.getObs().get(0).getConcept().getName().getName());

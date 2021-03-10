@@ -8,6 +8,7 @@ public class OpenMRSPatient {
     private String middleName;
     private String familyName;
     private Date birthDate;
+    private String patientUUID;
 
     public String getGender() {
         return gender;
@@ -59,4 +60,11 @@ public class OpenMRSPatient {
 
     private String gender;
 
+    public String getPatientUUID() {
+        return patientUUID;
+    }
+
+    public void setPatientUUID(String patientUUID) {
+        this.patientUUID = patientUUID;
+    }
 }

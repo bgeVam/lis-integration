@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OpenMRSObs {
-    public static final String OPENMRS_ENCOUNTER_PROVIDER_PROVIDER_UUID = "7d162c29-3f12-11e4-adec-0800271c1b75";
-    public static final String OPENMRS_ENCOUNTER_PROVIDER_PROVIDER_ROLE_UUID = "a0b03050-c99b-11e0-9572-0800200c9a66";
-
     private String obsDateTime;
     private String name;
     private OpenMRSOrder order;
