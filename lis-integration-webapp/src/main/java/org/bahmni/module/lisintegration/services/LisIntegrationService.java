@@ -15,7 +15,7 @@ import org.bahmni.module.lisintegration.model.OrderType;
 import org.bahmni.module.lisintegration.repository.OrderDetailsRepository;
 import org.bahmni.module.lisintegration.repository.OrderRepository;
 import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
 
@@ -27,9 +27,15 @@ import java.util.List;
 @Component
 public class LisIntegrationService {
     private static final org.apache.log4j.Logger log = Logger.getLogger(LisIntegrationService.class);
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
+
+    @Value("${green.letters}")
+    private String printGreen;
+
+    @Value("${red.letters}")
+    private String printRed;
+
+    @Value("${default.letters}")
+    private String printDefault;
 
     @Autowired
     private OpenMRSEncounterToOrderMapper openMRSEncounterToOrderMapper;
@@ -55,11 +61,11 @@ public class LisIntegrationService {
     public void setLisService(LisService lisService){
         this.lisService = lisService;
         try {
-            log.info(ANSI_GREEN + " Server is starting..." + ANSI_RESET);
+            log.info(printGreen + " Server is starting..." + printDefault);
             lisService.startServer();
-            log.info(ANSI_GREEN + "Server has been started..." + ANSI_RESET);
+            log.info(printGreen + "Server has been started..." + printDefault);
         } catch (Exception e) {
-            log.error(ANSI_RED + "An error has occurred..." + ANSI_RESET);
+            log.error(printRed + "An error has occurred..." + printDefault);
         }
     }
 
