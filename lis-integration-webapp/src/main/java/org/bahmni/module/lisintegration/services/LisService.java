@@ -1,33 +1,29 @@
 package org.bahmni.module.lisintegration.services;
 
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+import org.bahmni.module.lisintegration.exception.LisException;
+import org.bahmni.module.lisintegration.model.Lis;
+import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.ConnectionListener;
+import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v25.message.*;
+import ca.uhn.hl7v2.model.v25.message.ACK;
+import ca.uhn.hl7v2.model.v25.message.ORR_O02;
 import ca.uhn.hl7v2.parser.PipeParser;
-import org.bahmni.module.lisintegration.exception.LisException;
-import org.bahmni.module.lisintegration.model.Lis;
-import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.Component;
-import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.ConnectionListener;
-import ca.uhn.hl7v2.app.HL7Service;
-import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
-import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.util.idgenerator.UUIDGenerator;
-import org.apache.log4j.Logger;
-import ca.uhn.hl7v2.model.v25.group.ORM_O01_PATIENT;
-import ca.uhn.hl7v2.model.v25.segment.*;
-
-import java.io.IOException;
-import java.util.Date;
 
 @Component
 public class LisService {
@@ -50,6 +46,9 @@ public class LisService {
 
     @Autowired
     private OrderTypeRepository orderTypeRepository;
+
+    @Autowired
+    private ORUHandler oruHandler;
 
     public String sendMessage(AbstractMessage message, String orderType) throws HL7Exception, LLPException, IOException {
         Lis lis = orderTypeRepository.getByName(orderType).getLis();
@@ -98,7 +97,7 @@ public class LisService {
     public void startServer() throws InterruptedException {
         HapiContext hapiContext = new DefaultHapiContext();
         HL7Service server = hapiContext.newServer(port, false);
-        server.registerApplication("ORU", "R01", new ORUHandler());
+        server.registerApplication("ORU", "R01", oruHandler);
         server.setExceptionHandler(new ErrorHandler());
         server.registerConnectionListener(
             new ConnectionListener() {
