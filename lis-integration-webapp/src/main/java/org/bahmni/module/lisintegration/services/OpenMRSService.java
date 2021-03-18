@@ -129,6 +129,8 @@ public class OpenMRSService {
         UsernamePasswordCredentials credUser = new UsernamePasswordCredentials("Superman", "Admin123");
         httpPost.addHeader(new BasicScheme().authenticate(credUser, httpPost, null));
 
+        client.execute(httpPost);
+        
         client.close();
     }
 }
