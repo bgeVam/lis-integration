@@ -1,31 +1,45 @@
 package org.bahmni.module.lisintegration.services;
 
+import java.util.Arrays;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Visit;
+import org.bahmni.module.lisintegration.atomfeed.mappers.HL7ORUtoOpenMRSEncounterMapper;
+import org.bahmni.module.lisintegration.atomfeed.mappers.ResultMapper;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
-import org.apache.log4j.Logger;
-import org.bahmni.module.lisintegration.atomfeed.contract.encounter.*;
-import org.bahmni.module.lisintegration.atomfeed.mappers.HL7ORUtoOpenMRSEncounterMapper;
-import org.bahmni.module.lisintegration.atomfeed.mappers.ResultMapper;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import java.util.Arrays;
-import java.util.Map;
 
+@Component
 public class ORUHandler implements ReceivingApplication {
     private static final org.apache.log4j.Logger log = Logger.getLogger(ORUHandler.class);
+
+    @Value("${provider.lab_system.uuid}")
+    private String providerUUID;
+
+    @Value("${encounter.role.unknown.uuid}")
+    private String encounterRoleUUID;
+
+    @Value("${encounter.type.lab_result.uuid}")
+    private String encounterTypeUUID;
 
     @Override
     public Message processMessage(Message message, Map<String, Object> stringObjectMap) throws ReceivingApplicationException, HL7Exception {
         try {
-            final String encounterTypeUUID="82024e00-3f10-11e4-adec-0800271c1b75";
-            final String encounterRoleUUID="a0b03050-c99b-11e0-9572-0800200c9a66";
-            final String providerUUID="7d162c29-3f12-11e4-adec-0800271c1b75";
-
             log.info(message.encode());
             log.info("--------------------");
 
