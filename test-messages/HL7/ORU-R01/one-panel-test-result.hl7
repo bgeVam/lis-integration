@@ -1,0 +1,15 @@
+MSH|^~\&||LIS^Laboratory|BahmniEMR|BahmniEMR|||ORU^R01^ORU_R01||P|2.5
+ORC|RE|ORD-123|82024e00-3f10-11e4-adec-0800271c1b75
+OBR|1|Anaemia Panel
+OBX|1|NM|^Packed Cell Volume (PCV)||22|||||||||20210226113753
+OBX|2|NM|^Platelet Count||2|||||||||20210226113753
+OBX|3|NM|^PS for RBC Morphology||3|||||||||20210226113753
+OBX|4|NM|^RBC count||4|||||||||20210226113753
+OBX|5|NM|^MCV||1|||||||||20210226113753
+OBX|6|NM|^Reticulocyte count||4|||||||||20210226113753
+OBX|7|NM|^Sickling Test||4|||||||||20210226113753
+OBX|8|NM|^MCHC||1|||||||||20210226113753
+OBX|9|NM|^MCH||2|||||||||20210226113753
+OBX|10|NM|^Absolute Eosinphil Count||1|||||||||20210226113753
+OBX|11|NM|^Haemoglobin||1|||||||||20210226113753
+OBX|12|NM|^Hb Electrophoresis||2|||||||||20210226113753
