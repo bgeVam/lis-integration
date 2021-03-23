@@ -82,7 +82,8 @@ public class HL7ServiceTest {
 
         Assert.assertNotNull(hl7Message);
         assertEquals("CA", hl7Message.getORDER().getORC().getOrderControl().getValue());
-        assertEquals("ORD-111", hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
+        assertEquals("ORD-111", hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
+        assertEquals("someOrderUuid", hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
     }
 
     @Test(expected = HL7MessageException.class)

@@ -62,7 +62,7 @@ public class HL7Service {
             throw new HL7MessageException("Unable to create HL7 message. Order Number size exceeds limit " + orderNumber);
         }
         orc.getQuantityTiming(0).getPriority().setValue(order.getUrgency());
-        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderUUID);
+        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderNumber);
         orc.getFillerOrderNumber().getEntityIdentifier().setValue(orderUUID);
         orc.getEnteredBy(0).getGivenName().setValue(SENDER);
         orc.getOrderControl().setValue(NEW_ORDER);
@@ -88,11 +88,12 @@ public class HL7Service {
         // handle ORC component
         ORC orc = message.getORDER().getORC();
         String orderNumber = previousOrder.getOrderNumber();
+        String orderUUID = previousOrder.getOrderUuid();
         if(isSizeExceedingLimit(order.getOrderNumber())) {
             throw new HL7MessageException("Unable to create HL7 message. Order Number size exceeds limit" + orderNumber);
         }
         orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderNumber);
-        orc.getFillerOrderNumber().getEntityIdentifier().setValue(orderNumber); //accession number - should be of length 16 bytes
+        orc.getFillerOrderNumber().getEntityIdentifier().setValue(orderUUID);
         orc.getEnteredBy(0).getGivenName().setValue(SENDER);
         orc.getOrderControl().setValue(CANCEL_ORDER);
 
