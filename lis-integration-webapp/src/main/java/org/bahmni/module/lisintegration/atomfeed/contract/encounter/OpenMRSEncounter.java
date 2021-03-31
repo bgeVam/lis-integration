@@ -16,6 +16,15 @@ public class OpenMRSEncounter {
     private String encounterType;
     private String encounterRole;
     private Visit visit;
+    private PatientDocument patientDocument;
+
+    public PatientDocument getPatientDocument() {
+        return this.patientDocument;
+    }
+
+    public void setPatientDocument(PatientDocument patientDocument) {
+        this.patientDocument = patientDocument;
+    }
 
     public OpenMRSEncounter() {
     }

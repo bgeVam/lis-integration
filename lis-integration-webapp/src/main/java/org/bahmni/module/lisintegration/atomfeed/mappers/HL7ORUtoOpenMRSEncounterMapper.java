@@ -13,6 +13,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConce
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSObs;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.PatientDocument;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
@@ -34,30 +35,43 @@ public class HL7ORUtoOpenMRSEncounterMapper {
                 // OBR segment can be used for panel
                 OBR obr = orderObservation.getOBR();
 
-                ORC orc = orderObservation.getORC();
-                String fillerOrderNumber = orc.getFillerOrderNumber().getEntityIdentifier().getValue();
-                OpenMRSOrder order = new OpenMRSOrder();
-                order.setUuid(fillerOrderNumber);
-                result.setOrders(Arrays.asList(order));
+                if ("Patient Document".equals(obr.getUniversalServiceIdentifier().getText().getValue())) {
+                    for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
+                        OBX obx_document = observation.getOBX();
 
-                for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
-                    OBX obx = observation.getOBX();
+                        PatientDocument patientDocument = new PatientDocument();
+                        patientDocument.setConctent(obx_document.getObservationValue()[0].encode());
+                        patientDocument.setEncounterTypeName(obr.getUniversalServiceIdentifier().getText().getValue());
+                        patientDocument.setDateTime(obx_document.getObservationValue()[0].encode());
 
-                    String observationIdentifier = obx.getObservationIdentifier().getText().getValue();
-                    OpenMRSObs obs = new OpenMRSObs();
-                    OpenMRSConcept concept = new OpenMRSConcept();
-                    concept.setName(new OpenMRSConceptName(observationIdentifier));
-                    obs.setConcept(concept);
-                    obs.setOrder(order);
-                    String observationDateTime = obx.getDateTimeOfTheObservation().getTime().getValue();
-                    obs.setObsDateTime(convertHL7DateStringToOpenMRSDateString(observationDateTime));
+                        result.setPatientDocument(patientDocument);
+                    }
+                } else  {
+                    ORC orc = orderObservation.getORC();
+                    String fillerOrderNumber = orc.getFillerOrderNumber().getEntityIdentifier().getValue();
+                    OpenMRSOrder order = new OpenMRSOrder();
+                    order.setUuid(fillerOrderNumber);
+                    result.setOrders(Arrays.asList(order));
 
-                    // groupMembers
-                    OpenMRSObs valueGroupMember = new OpenMRSObs();
-                    valueGroupMember.setConcept(concept);
-                    valueGroupMember.setValue(Double.valueOf(obx.getObservationValue()[0].encode()));
-                    obs.setGroupMembers(Arrays.asList(valueGroupMember));
-                    result.setObs(Arrays.asList(obs));
+                    for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
+                        OBX obx = observation.getOBX();
+
+                        String observationIdentifier = obx.getObservationIdentifier().getText().getValue();
+                        OpenMRSObs obs = new OpenMRSObs();
+                        OpenMRSConcept concept = new OpenMRSConcept();
+                        concept.setName(new OpenMRSConceptName(observationIdentifier));
+                        obs.setConcept(concept);
+                        obs.setOrder(order);
+                        String observationDateTime = obx.getDateTimeOfTheObservation().getTime().getValue();
+                        obs.setObsDateTime(convertHL7DateStringToOpenMRSDateString(observationDateTime));
+
+                        // groupMembers
+                        OpenMRSObs valueGroupMember = new OpenMRSObs();
+                        valueGroupMember.setConcept(concept);
+                        valueGroupMember.setValue(Double.valueOf(obx.getObservationValue()[0].encode()));
+                        obs.setGroupMembers(Arrays.asList(valueGroupMember));
+                        result.setObs(Arrays.asList(obs));
+                    }
                 }
             }
         }
