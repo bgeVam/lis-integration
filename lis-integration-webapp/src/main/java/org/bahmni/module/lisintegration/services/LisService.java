@@ -50,6 +50,9 @@ public class LisService {
     @Autowired
     private ORUHandler oruHandler;
 
+    @Autowired
+    private SharedHapiContext sharedHapiContext;
+
     public String sendMessage(AbstractMessage message, String orderType) throws HL7Exception, LLPException, IOException {
         Lis lis = orderTypeRepository.getByName(orderType).getLis();
         Message response = post(lis, message);
@@ -95,7 +98,7 @@ public class LisService {
     }
 
     public void startServer() throws InterruptedException {
-        HapiContext hapiContext = new DefaultHapiContext();
+        HapiContext hapiContext = sharedHapiContext.getHapiContext();
         HL7Service server = hapiContext.newServer(port, false);
         server.registerApplication("ORU", "R01", oruHandler);
         server.setExceptionHandler(new ErrorHandler());
