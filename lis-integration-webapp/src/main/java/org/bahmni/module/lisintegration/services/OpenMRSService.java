@@ -110,7 +110,6 @@ public class OpenMRSService {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
-
         String encounterAPI = "/openmrs/ws/rest/v1/encounter/"+ encounterUUID + "?v=full";
         String encounterJSON = webClient.get(URI.create(urlPrefix + encounterAPI));
 
