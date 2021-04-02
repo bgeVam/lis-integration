@@ -1,0 +1,382 @@
+{
+    "uuid": "45efbd4e-1ce6-4c60-8b40-af3543100e11",
+    "display": "Consultation 04/02/2021",
+    "encounterDatetime": "2021-04-02T07:56:13.000+0000",
+    "patient": {
+      "uuid": "32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1",
+      "display": "WWW445427 - asd asd asd",
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/patient/32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1"
+        }
+      ]
+    },
+    "location": {
+      "uuid": "96c7493b-fac2-45bf-b319-f47ae78bc839",
+      "display": "COV19 Ward",
+      "name": "COV19 Ward",
+      "description": "Ward D3 part Main Hospital in Somewhere",
+      "address1": null,
+      "address2": null,
+      "cityVillage": null,
+      "stateProvince": null,
+      "country": "Somewhere",
+      "postalCode": null,
+      "latitude": null,
+      "longitude": null,
+      "countyDistrict": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "address6": null,
+      "tags": [
+        {
+          "uuid": "b8bbf83e-645f-451f-8efe-a0db56f09676",
+          "display": "Login Location",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/locationtag/b8bbf83e-645f-451f-8efe-a0db56f09676"
+            }
+          ]
+        },
+        {
+          "uuid": "a675e840-d225-11e4-9c67-080027b662ec",
+          "display": "Admission Location",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/locationtag/a675e840-d225-11e4-9c67-080027b662ec"
+            }
+          ]
+        }
+      ],
+      "parentLocation": {
+        "uuid": "ffe6c4f3-3e83-472f-9444-5c4d18df9716",
+        "display": "Somewhere C1",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/location/ffe6c4f3-3e83-472f-9444-5c4d18df9716"
+          }
+        ]
+      },
+      "childLocations": [
+        {
+          "uuid": "dce20c83-2b37-49be-8109-56a783b8da9a",
+          "display": "Room D2-1",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/location/dce20c83-2b37-49be-8109-56a783b8da9a"
+            }
+          ]
+        }
+      ],
+      "retired": false,
+      "attributes": [],
+      "address7": null,
+      "address8": null,
+      "address9": null,
+      "address10": null,
+      "address11": null,
+      "address12": null,
+      "address13": null,
+      "address14": null,
+      "address15": null,
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/location/96c7493b-fac2-45bf-b319-f47ae78bc839"
+        },
+        {
+          "rel": "full",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/location/96c7493b-fac2-45bf-b319-f47ae78bc839?v=full"
+        }
+      ],
+      "resourceVersion": "2.0"
+    },
+    "form": null,
+    "encounterType": {
+      "uuid": "81852aee-3f10-11e4-adec-0800271c1b75",
+      "display": "Consultation",
+      "name": "Consultation",
+      "description": "Consultation encounter",
+      "retired": false,
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encountertype/81852aee-3f10-11e4-adec-0800271c1b75"
+        },
+        {
+          "rel": "full",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encountertype/81852aee-3f10-11e4-adec-0800271c1b75?v=full"
+        }
+      ],
+      "resourceVersion": "1.8"
+    },
+    "obs": [],
+    "orders": [
+      {
+        "uuid": "5330e5d0-f134-45d4-8615-f5462492481e",
+        "orderNumber": "ORD-307",
+        "accessionNumber": null,
+        "patient": {
+          "uuid": "32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1",
+          "display": "WWW445427 - asd asd asd",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/patient/32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1"
+            }
+          ]
+        },
+        "concept": {
+          "uuid": "4e905b9d-83f6-43c6-b388-0e1f9490c39b",
+          "display": "Leukocytes",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/concept/4e905b9d-83f6-43c6-b388-0e1f9490c39b"
+            }
+          ]
+        },
+        "action": "NEW",
+        "careSetting": {
+          "uuid": "6f0c9a92-6f24-11e3-af88-005056821db0",
+          "display": "Outpatient",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/caresetting/6f0c9a92-6f24-11e3-af88-005056821db0"
+            }
+          ]
+        },
+        "previousOrder": null,
+        "dateActivated": "2021-04-02T07:56:13.000+0000",
+        "scheduledDate": null,
+        "dateStopped": null,
+        "autoExpireDate": "2021-04-02T08:56:13.000+0000",
+        "encounter": {
+          "uuid": "45efbd4e-1ce6-4c60-8b40-af3543100e11",
+          "display": "Consultation 04/02/2021",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounter/45efbd4e-1ce6-4c60-8b40-af3543100e11"
+            }
+          ]
+        },
+        "orderer": {
+          "uuid": "c1c26908-3f10-11e4-adec-0800271c1b75",
+          "display": "superman - Super Man",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/provider/c1c26908-3f10-11e4-adec-0800271c1b75"
+            }
+          ]
+        },
+        "orderReason": null,
+        "orderReasonNonCoded": null,
+        "orderType": {
+          "uuid": "8189b409-3f10-11e4-adec-0800271c1b75",
+          "display": "Lab Order",
+          "name": "Lab Order",
+          "javaClassName": "org.openmrs.Order",
+          "retired": false,
+          "description": "An order for laboratory tests",
+          "conceptClasses": [
+            {
+              "uuid": "33a6291c-8a92-11e4-977f-0800271c1b75",
+              "display": "LabTest",
+              "links": [
+                {
+                  "rel": "self",
+                  "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/conceptclass/33a6291c-8a92-11e4-977f-0800271c1b75"
+                }
+              ]
+            },
+            {
+              "uuid": "8d492026-c2cc-11de-8d13-0010c6dffd0f",
+              "display": "LabSet",
+              "links": [
+                {
+                  "rel": "self",
+                  "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/conceptclass/8d492026-c2cc-11de-8d13-0010c6dffd0f"
+                }
+              ]
+            }
+          ],
+          "parent": null,
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/ordertype/8189b409-3f10-11e4-adec-0800271c1b75"
+            },
+            {
+              "rel": "full",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/ordertype/8189b409-3f10-11e4-adec-0800271c1b75?v=full"
+            }
+          ],
+          "resourceVersion": "1.10"
+        },
+        "urgency": "ROUTINE",
+        "instructions": null,
+        "commentToFulfiller": null,
+        "display": "Leukocytes",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/order/5330e5d0-f134-45d4-8615-f5462492481e"
+          },
+          {
+            "rel": "full",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/order/5330e5d0-f134-45d4-8615-f5462492481e?v=full"
+          }
+        ],
+        "type": "order",
+        "resourceVersion": "1.10"
+      }
+    ],
+    "voided": false,
+    "auditInfo": {
+      "creator": {
+        "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75",
+        "display": "superman",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
+          }
+        ]
+      },
+      "dateCreated": "2021-04-02T07:56:13.000+0000",
+      "changedBy": null,
+      "dateChanged": null
+    },
+    "visit": {
+      "uuid": "71149be7-2bd3-4703-b1e9-1f0e13cbd477",
+      "display": "EMERGENCY @ Somewhere C1 - 04/02/2021 07:55 AM",
+      "patient": {
+        "uuid": "32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1",
+        "display": "WWW445427 - asd asd asd",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/patient/32fbc3f7-a590-4ecb-9a44-9a4e0032e4f1"
+          }
+        ]
+      },
+      "visitType": {
+        "uuid": "2693e2cc-3e37-4469-a73c-456615329923",
+        "display": "EMERGENCY",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/visittype/2693e2cc-3e37-4469-a73c-456615329923"
+          }
+        ]
+      },
+      "indication": null,
+      "location": {
+        "uuid": "ffe6c4f3-3e83-472f-9444-5c4d18df9716",
+        "display": "Somewhere C1",
+        "links": [
+          {
+            "rel": "self",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/location/ffe6c4f3-3e83-472f-9444-5c4d18df9716"
+          }
+        ]
+      },
+      "startDatetime": "2021-04-02T07:55:42.000+0000",
+      "stopDatetime": null,
+      "encounters": [
+        {
+          "uuid": "45efbd4e-1ce6-4c60-8b40-af3543100e11",
+          "display": "Consultation 04/02/2021",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounter/45efbd4e-1ce6-4c60-8b40-af3543100e11"
+            }
+          ]
+        },
+        {
+          "uuid": "9a73b667-5d7f-4547-9bbd-b04bfa543bd8",
+          "display": "REG 04/02/2021",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounter/9a73b667-5d7f-4547-9bbd-b04bfa543bd8"
+            }
+          ]
+        }
+      ],
+      "attributes": [
+        {
+          "uuid": "d9ea0e41-d341-41d4-b622-015d7cb267a4",
+          "display": "Visit Status: OPD",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/visit/71149be7-2bd3-4703-b1e9-1f0e13cbd477/attribute/d9ea0e41-d341-41d4-b622-015d7cb267a4"
+            }
+          ]
+        }
+      ],
+      "voided": false,
+      "links": [
+        {
+          "rel": "self",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/visit/71149be7-2bd3-4703-b1e9-1f0e13cbd477"
+        },
+        {
+          "rel": "full",
+          "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/visit/71149be7-2bd3-4703-b1e9-1f0e13cbd477?v=full"
+        }
+      ],
+      "resourceVersion": "1.9"
+    },
+    "encounterProviders": [
+      {
+        "uuid": "922fa57d-2da1-4831-81ef-d68cf691fc58",
+        "provider": {
+          "uuid": "c1c26908-3f10-11e4-adec-0800271c1b75",
+          "display": "superman - Super Man",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/provider/c1c26908-3f10-11e4-adec-0800271c1b75"
+            }
+          ]
+        },
+        "encounterRole": {
+          "uuid": "a0b03050-c99b-11e0-9572-0800200c9a66",
+          "display": "Unknown",
+          "links": [
+            {
+              "rel": "self",
+              "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounterrole/a0b03050-c99b-11e0-9572-0800200c9a66"
+            }
+          ]
+        },
+        "voided": false,
+        "links": [
+          {
+            "rel": "full",
+            "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounter/45efbd4e-1ce6-4c60-8b40-af3543100e11/encounterprovider/922fa57d-2da1-4831-81ef-d68cf691fc58?v=full"
+          }
+        ],
+        "resourceVersion": "1.9"
+      }
+    ],
+    "links": [
+      {
+        "rel": "self",
+        "uri": "http://XXXX.XXXX.XXXX.XXXX:8145/openmrs/ws/rest/v1/encounter/45efbd4e-1ce6-4c60-8b40-af3543100e11"
+      }
+    ],
+    "resourceVersion": "1.9"
+  }

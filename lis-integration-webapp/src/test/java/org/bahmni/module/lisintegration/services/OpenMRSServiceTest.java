@@ -5,6 +5,8 @@ import org.bahmni.module.lisintegration.atomfeed.client.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.*;
 import org.bahmni.webclients.*;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.*;
 import org.junit.Test;
 import org.junit.runner.*;
@@ -36,7 +38,7 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
     }
 
     @Test
-    public void ShouldGetEncounter() throws Exception{
+    public void shouldGetEncounter() throws Exception{
         PowerMockito.mockStatic(WebClientFactory.class);
         when(WebClientFactory.getClient()).thenReturn(webClient);
         when(webClient.get(new URI("http://localhost:8050/encounter/1"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/sampleOpenMRSEncounter.json"));
@@ -66,7 +68,7 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
     }
 
     @Test
-    public void ShouldGetSample() throws Exception{
+    public void shouldGetSample() throws Exception{
         PowerMockito.mockStatic(WebClientFactory.class);
         when(WebClientFactory.getClient()).thenReturn(webClient);
         when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/sampleLabSamplesConcept.json"));
@@ -77,5 +79,21 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         Sample sample = new OpenMRSService().getSample("f5774c43-1e4c-46fa-a06a-4e2c684b154c");
 
         assertEquals("Blood", sample.getName());
+    }
+
+    @Test
+    public void shouldGetEncounterByUuid() throws Exception{
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/encounter/45efbd4e-1ce6-4c60-8b40-af3543100e11?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/encounter.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/encounter.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        String encounterJSON = new OpenMRSService().getEncounterByUUID("45efbd4e-1ce6-4c60-8b40-af3543100e11");
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode encounterJSONNode = objectMapper.readTree(encounterJSON);
+        
+        assertEquals("45efbd4e-1ce6-4c60-8b40-af3543100e11", encounterJSONNode.path("uuid").getTextValue());
     }
 }
