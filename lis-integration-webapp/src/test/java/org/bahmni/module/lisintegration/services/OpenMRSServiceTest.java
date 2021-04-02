@@ -96,4 +96,18 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         
         assertEquals("45efbd4e-1ce6-4c60-8b40-af3543100e11", encounterJSONNode.path("uuid").getTextValue());
     }
+
+    @Test
+    public void shouldGetOrder() throws Exception{
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/order/5330e5d0-f134-45d4-8615-f5462492481e?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/order.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/order.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        OpenMRSOrder order = new OpenMRSService().getOrder("5330e5d0-f134-45d4-8615-f5462492481e");
+        
+        assertEquals("5330e5d0-f134-45d4-8615-f5462492481e", order.getUuid());
+    }
 }
