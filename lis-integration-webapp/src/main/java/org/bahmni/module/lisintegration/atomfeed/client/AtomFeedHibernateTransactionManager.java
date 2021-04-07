@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Component
 public class AtomFeedHibernateTransactionManager implements AFTransactionManager, JdbcConnectionProvider {
 
@@ -30,17 +29,22 @@ public class AtomFeedHibernateTransactionManager implements AFTransactionManager
     @PersistenceContext
     EntityManager entityManager;
 
-    private Map<AFTransactionWork.PropagationDefinition, Integer> propagationMap = new HashMap<AFTransactionWork.PropagationDefinition, Integer>();
+    private Map<AFTransactionWork.PropagationDefinition, Integer> propagationMap =
+        new HashMap<AFTransactionWork.PropagationDefinition, Integer>();
 
     public AtomFeedHibernateTransactionManager() {
-        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRED, TransactionDefinition.PROPAGATION_REQUIRED);
-        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRES_NEW, TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.PROPAGATION_REQUIRED);
+        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRES_NEW,
+                TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
-    public AtomFeedHibernateTransactionManager(PlatformTransactionManager transactionManager) {
+    public AtomFeedHibernateTransactionManager(final PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRED, TransactionDefinition.PROPAGATION_REQUIRED);
-        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRES_NEW, TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.PROPAGATION_REQUIRED);
+        propagationMap.put(AFTransactionWork.PropagationDefinition.PROPAGATION_REQUIRES_NEW,
+                TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @Override
@@ -62,7 +66,8 @@ public class AtomFeedHibernateTransactionManager implements AFTransactionManager
 
     @Override
     public Connection getConnection() throws SQLException {
-        //TODO: ensure that only connection associated with current thread current transaction is given
+        // ensure that only connection associated with current thread current
+        // transaction is given
         SessionImpl sessionImpl = (SessionImpl) getCurrentSession();
         return sessionImpl.connection();
     }

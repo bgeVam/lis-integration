@@ -11,7 +11,7 @@ public class OpenMRSProvider {
     public OpenMRSProvider() {
     }
 
-    public OpenMRSProvider(String uuid, String name) {
+    public OpenMRSProvider(final String uuid, final String name) {
         this.uuid = uuid;
         this.name = name;
     }

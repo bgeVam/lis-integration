@@ -15,7 +15,7 @@ public class OpenMRSConcept {
     public OpenMRSConcept() {
     }
 
-    public OpenMRSConcept(String uuid, OpenMRSConceptName name, boolean set) {
+    public OpenMRSConcept(final String uuid, final OpenMRSConceptName name, final boolean set) {
 
         this.uuid = uuid;
         this.name = name;
@@ -57,12 +57,18 @@ public class OpenMRSConcept {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         OpenMRSConcept that = (OpenMRSConcept) o;
 
-        if (!uuid.equals(that.uuid)) return false;
+        if (!uuid.equals(that.uuid)) {
+            return false;
+        }
 
         return true;
     }

@@ -27,7 +27,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 
 @Component
 public class LisService {
-    private static final org.apache.log4j.Logger log = Logger.getLogger(LisService.class);
+    private static final org.apache.log4j.Logger LOG = Logger.getLogger(LisService.class);
 
     @Value("${green.letters}")
     private String printGreen;
@@ -53,7 +53,8 @@ public class LisService {
     @Autowired
     private SharedHapiContext sharedHapiContext;
 
-    public String sendMessage(AbstractMessage message, String orderType) throws HL7Exception, LLPException, IOException {
+    public String sendMessage(AbstractMessage message, String orderType)
+            throws HL7Exception, LLPException, IOException {
         Lis lis = orderTypeRepository.getByName(orderType).getLis();
         Message response = post(lis, message);
         String responseMessage = parseResponse(response);
@@ -61,13 +62,11 @@ public class LisService {
             ORR_O02 acknowledgement = (ORR_O02) response;
             String acknowledgmentCode = acknowledgement.getMSA().getAcknowledgmentCode().getValue();
             processAcknowledgement(lis, responseMessage, acknowledgmentCode);
-        }
-        else if (response instanceof ACK) {
+        } else if (response instanceof ACK) {
             ACK acknowledgement = (ACK) response;
             String acknowledgmentCode = acknowledgement.getMSA().getAcknowledgmentCode().getValue();
             processAcknowledgement(lis, responseMessage, acknowledgmentCode);
-        }
-        else {
+        } else {
             throw new LisException(responseMessage, lis);
         }
         return responseMessage;
@@ -102,22 +101,22 @@ public class LisService {
         HL7Service server = hapiContext.newServer(port, false);
         server.registerApplication("ORU", "R01", oruHandler);
         server.setExceptionHandler(new ErrorHandler());
-        server.registerConnectionListener(
-            new ConnectionListener() {
-                @Override
-                public void connectionReceived(Connection connection) {
-                    log.info(printGreen + "New connection received: " + connection.getRemoteAddress().toString() + printDefault);
-                }
+        server.registerConnectionListener(new ConnectionListener() {
+            @Override
+            public void connectionReceived(Connection connection) {
+                LOG.info(printGreen + "New connection received: " + connection.getRemoteAddress().toString()
+                        + printDefault);
+            }
 
-                @Override
-                public void connectionDiscarded(Connection connection) {
-                    log.info(printRed + "Lost connection from: " + connection.getRemoteAddress().toString() + printDefault);
-                }
-            });
+            @Override
+            public void connectionDiscarded(Connection connection) {
+                LOG.info(printRed + "Lost connection from: " + connection.getRemoteAddress().toString() + printDefault);
+            }
+        });
         server.startAndWait();
         System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(300000));
 
-        log.info(printGreen + "Started server at " + host + ":" + port + " with timeout of " + 300000 + printDefault);
+        LOG.info(printGreen + "Started server at " + host + ":" + port + " with timeout of " + 300000 + printDefault);
     }
 
 }

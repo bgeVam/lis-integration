@@ -1,7 +1,12 @@
 package org.bahmni.module.lisintegration.atomfeed.client;
 
 
-public class ConnectionDetails {
+public final class ConnectionDetails {
+
+    private ConnectionDetails() {
+        throw new IllegalStateException("ConnectionDetails class");
+      }
+
     private static final String AUTH_URI = "openmrs.auth.uri";
     private static final String OPENMRS_USER = "openmrs.user";
     private static final String OPENMRS_PASSWORD = "openmrs.password";

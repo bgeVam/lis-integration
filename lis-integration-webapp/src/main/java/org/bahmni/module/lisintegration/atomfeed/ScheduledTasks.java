@@ -49,13 +49,15 @@ public class ScheduledTasks implements SchedulingConfigurer {
         final List<QuartzCronScheduler> cronJobs = cronJobRepository.findAll();
 
         for (final QuartzCronScheduler quartzCronScheduler : cronJobs) {
-            jobs.put(quartzCronScheduler.getName(), ((FeedJob) applicationContext.getBean(quartzCronScheduler.getName())));
+            jobs.put(quartzCronScheduler.getName(),
+                    ((FeedJob) applicationContext.getBean(quartzCronScheduler.getName())));
 
             try {
                 taskRegistrar.setScheduler(taskExecutor());
                 taskRegistrar.addTriggerTask(getTask(quartzCronScheduler), getTrigger(quartzCronScheduler));
             } catch (ParseException e) {
-                logger.error("Could not parse the cron statement: " + quartzCronScheduler.getCronStatement() + " for: " + quartzCronScheduler.getName());
+                logger.error("Could not parse the cron statement: " + quartzCronScheduler.getCronStatement() + " for: "
+                        + quartzCronScheduler.getName());
                 e.printStackTrace();
             }
         }
@@ -64,8 +66,10 @@ public class ScheduledTasks implements SchedulingConfigurer {
     private Trigger getTrigger(QuartzCronScheduler quartzCronScheduler) throws ParseException {
         PeriodicTrigger periodicTrigger;
         Date now = new Date();
-        long nextExecutionTimeByStatement = new CronExpression(quartzCronScheduler.getCronStatement()).getNextValidTimeAfter(now).getTime();
-        periodicTrigger = new PeriodicTrigger((int) (nextExecutionTimeByStatement - now.getTime()), TimeUnit.MILLISECONDS);
+        long nextExecutionTimeByStatement = new CronExpression(quartzCronScheduler.getCronStatement())
+                .getNextValidTimeAfter(now).getTime();
+        periodicTrigger = new PeriodicTrigger((int) (nextExecutionTimeByStatement - now.getTime()),
+                TimeUnit.MILLISECONDS);
         periodicTrigger.setInitialDelay(quartzCronScheduler.getStartDelay());
         return periodicTrigger;
     }

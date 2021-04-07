@@ -27,28 +27,29 @@ public class HL7Service {
     @Autowired
     private OrderRepository orderRepository;
 
-
     public HL7Service() {
     }
 
-    public HL7Service(OrderRepository orderRepository) {
+    public HL7Service(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
-    private final String NEW_ORDER = "NW";
-    private final String CANCEL_ORDER = "CA";
-    private final String SENDER = "BahmniEMR";
-    private final String EMAIL = "root@Example-lis.com";
+    private final String newOrder = "NW";
+    private final String cancelOrder = "CA";
+    private final String sender = "BahmniEMR";
+    private final String email = "root@Example-lis.com";
 
-    public AbstractMessage createMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
-        if(order.isDiscontinued()) {
+    public AbstractMessage createMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
+            List<OpenMRSProvider> providers) throws DataTypeException {
+        if (order.isDiscontinued()) {
             return cancelOrderMessage(order, sample, openMRSPatient, providers);
         } else {
             return createOrderMessage(order, sample, openMRSPatient, providers);
         }
     }
 
-    private AbstractMessage createOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
+    private AbstractMessage createOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
+            List<OpenMRSProvider> providers) throws DataTypeException {
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
@@ -58,14 +59,15 @@ public class HL7Service {
         ORC orc = message.getORDER().getORC();
         String orderNumber = order.getOrderNumber();
         String orderUUID = order.getUuid();
-        if(isSizeExceedingLimit(orderNumber)) {
-            throw new HL7MessageException("Unable to create HL7 message. Order Number size exceeds limit " + orderNumber);
+        if (isSizeExceedingLimit(orderNumber)) {
+            throw new HL7MessageException(
+                    "Unable to create HL7 message. Order Number size exceeds limit " + orderNumber);
         }
         orc.getQuantityTiming(0).getPriority().setValue(order.getUrgency());
         orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderNumber);
         orc.getFillerOrderNumber().getEntityIdentifier().setValue(orderUUID);
-        orc.getEnteredBy(0).getGivenName().setValue(SENDER);
-        orc.getOrderControl().setValue(NEW_ORDER);
+        orc.getEnteredBy(0).getGivenName().setValue(sender);
+        orc.getOrderControl().setValue(newOrder);
 
         addOBRComponent(order, sample, message);
         return message;
@@ -75,10 +77,12 @@ public class HL7Service {
         return orderNumber.getBytes().length > 16;
     }
 
-    private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws DataTypeException {
+    private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
+            List<OpenMRSProvider> providers) throws DataTypeException {
         Order previousOrder = orderRepository.findByOrderUuid(order.getPreviousOrderUuid());
-        if(previousOrder == null) {
-            throw  new HL7MessageException("Unable to Cancel the Order. Previous order is not found" + order.getOrderNumber());
+        if (previousOrder == null) {
+            throw new HL7MessageException(
+                    "Unable to Cancel the Order. Previous order is not found" + order.getOrderNumber());
         }
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
@@ -89,13 +93,14 @@ public class HL7Service {
         ORC orc = message.getORDER().getORC();
         String orderNumber = previousOrder.getOrderNumber();
         String orderUUID = previousOrder.getOrderUuid();
-        if(isSizeExceedingLimit(order.getOrderNumber())) {
-            throw new HL7MessageException("Unable to create HL7 message. Order Number size exceeds limit" + orderNumber);
+        if (isSizeExceedingLimit(order.getOrderNumber())) {
+            throw new HL7MessageException(
+                    "Unable to create HL7 message. Order Number size exceeds limit" + orderNumber);
         }
         orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderNumber);
         orc.getFillerOrderNumber().getEntityIdentifier().setValue(orderUUID);
-        orc.getEnteredBy(0).getGivenName().setValue(SENDER);
-        orc.getOrderControl().setValue(CANCEL_ORDER);
+        orc.getEnteredBy(0).getGivenName().setValue(sender);
+        orc.getOrderControl().setValue(cancelOrder);
 
         addOBRComponent(order, sample, message);
         return message;
@@ -105,7 +110,7 @@ public class HL7Service {
         MSH msh = message.getMSH();
 
         msh.getMessageControlID().setValue(generateMessageControlID(order.getOrderNumber()));
-        populateMessageHeader(msh, new Date(), "ORM", "O01", SENDER);
+        populateMessageHeader(msh, new Date(), "ORM", "O01", sender);
     }
 
     private void addOBRComponent(OpenMRSOrder order, Sample sample, ORM_O01 message) throws DataTypeException {
@@ -113,8 +118,9 @@ public class HL7Service {
         OBR obr = message.getORDER().getORDER_DETAIL().getOBR();
 
         OpenMRSConceptMapping lisConceptSource = order.getLisConceptSource();
-        if(lisConceptSource == null) {
-            throw new HL7MessageException("Unable to create HL7 message. Missing concept source for order" + order.getUuid());
+        if (lisConceptSource == null) {
+            throw new HL7MessageException(
+                    "Unable to create HL7 message. Missing concept source for order" + order.getUuid());
         }
         obr.getUniversalServiceIdentifier().getIdentifier().setValue(lisConceptSource.getCode());
         obr.getUniversalServiceIdentifier().getText().setValue(lisConceptSource.getName());
@@ -133,7 +139,7 @@ public class HL7Service {
         ORC orc = message.getORDER().getORC();
         orc.getOrderingProvider(0).getGivenName().setValue(openMRSProvider.getName());
         orc.getOrderingProvider(0).getIDNumber().setValue(openMRSProvider.getUuid());
-        orc.getCallBackPhoneNumber(0).getEmailAddress().setValue(EMAIL);
+        orc.getCallBackPhoneNumber(0).getEmailAddress().setValue(email);
     }
 
     private void addPatientDetails(ORM_O01 message, OpenMRSPatient openMRSPatient) throws DataTypeException {
@@ -146,7 +152,8 @@ public class HL7Service {
         pid.getDateTimeOfBirth().getTime().setValue(openMRSPatient.getBirthDate());
         pid.getAdministrativeSex().setValue(openMRSPatient.getGender());
 
-        message.getORDER().getORDER_DETAIL().getOBR().getPlannedPatientTransportComment(0).getText().setValue(openMRSPatient.getGivenName()+","+openMRSPatient.getFamilyName());
+        message.getORDER().getORDER_DETAIL().getOBR().getPlannedPatientTransportComment(0).getText()
+                .setValue(openMRSPatient.getGivenName() + "," + openMRSPatient.getFamilyName());
 
     }
 
@@ -154,7 +161,8 @@ public class HL7Service {
         return new SimpleDateFormat("yyyyMMddHH");
     }
 
-    private MSH populateMessageHeader(MSH msh, Date dateTime, String messageType, String triggerEvent, String sendingFacility) throws DataTypeException {
+    private MSH populateMessageHeader(MSH msh, Date dateTime, String messageType, String triggerEvent,
+            String sendingFacility) throws DataTypeException {
         msh.getFieldSeparator().setValue("|");
         msh.getEncodingCharacters().setValue("^~\\&");
         msh.getSendingFacility().getHd1_NamespaceID().setValue(sendingFacility);
@@ -163,8 +171,8 @@ public class HL7Service {
         msh.getDateTimeOfMessage().getTs1_Time().setValue(getHl7DateFormat().format(dateTime));
         msh.getMessageType().getMessageCode().setValue(messageType);
         msh.getMessageType().getTriggerEvent().setValue(triggerEvent);
-        //  TODO: do we need to send Message Control ID?
-        msh.getProcessingID().getProcessingID().setValue("P");  // stands for production (?)
+        // do we need to send Message Control ID?
+        msh.getProcessingID().getProcessingID().setValue("P"); // stands for production (?)
         msh.getVersionID().getVersionID().setValue("2.5");
         return msh;
     }

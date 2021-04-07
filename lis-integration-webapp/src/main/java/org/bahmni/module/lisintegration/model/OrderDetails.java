@@ -11,7 +11,7 @@ public class OrderDetails {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="test_order_id", nullable=false)
+    @JoinColumn(name = "test_order_id", nullable = false)
     private Order order;
 
     @Column(name = "hl7_request", nullable = false, length = 65535)
@@ -23,7 +23,7 @@ public class OrderDetails {
     public OrderDetails() {
     }
 
-    public OrderDetails(Order order, String hl7Request, String hl7Response) {
+    public OrderDetails(final Order order, final String hl7Request, final String hl7Response) {
         this.order = order;
         this.hl7Request = hl7Request;
         this.hl7Response = hl7Response;

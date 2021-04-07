@@ -29,7 +29,7 @@ import java.util.Map;
 public abstract class BaseIntegrationTest {
 
     public static HL7Service lisStubServer;
-    private static final Logger log = LoggerFactory.getLogger(BaseIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseIntegrationTest.class);
 
     @Before
     public void startLisStubServer() throws InterruptedException, UnknownHostException {
@@ -38,9 +38,11 @@ public abstract class BaseIntegrationTest {
         lisStubServer = hapiContext.newServer(port, false);
         lisStubServer.registerApplication("ORM", "O01", new ReceivingApplication() {
             @Override
-            public Message processMessage(Message message, Map<String, Object> map) throws ReceivingApplicationException, HL7Exception {
+            public Message processMessage(Message message, Map<String, Object> map)
+                    throws ReceivingApplicationException, HL7Exception {
                 ORM_O01 ormMessage = (ORM_O01) message;
-                return HL7Utils.generateORRwithAccept(ormMessage.getMSH().getMessageControlID().getValue(), "BahmniEMR");
+                return HL7Utils.generateORRwithAccept(ormMessage.getMSH().getMessageControlID().getValue(),
+                        "BahmniEMR");
             }
 
             @Override
@@ -50,11 +52,12 @@ public abstract class BaseIntegrationTest {
         });
         lisStubServer.startAndWait();
         System.setProperty("ca.uhn.hl7v2.app.initiator.timeout", Integer.toString(2000));
-        log.debug("Starting lis stub lisStubServer at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port + " with timeout of " + 2000);
+        LOG.debug("Starting lis stub lisStubServer at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port
+                + " with timeout of " + 2000);
     }
 
     @After
-    public void stopLisStubServer(){
+    public void stopLisStubServer() {
         lisStubServer.stopAndWait();
     }
 }

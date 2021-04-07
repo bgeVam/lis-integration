@@ -8,7 +8,7 @@ import java.io.IOException;
 public class OpenMRSEncounterMapper {
     private ObjectMapper objectMapper;
 
-    public OpenMRSEncounterMapper(ObjectMapper objectMapper) {
+    public OpenMRSEncounterMapper(final ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

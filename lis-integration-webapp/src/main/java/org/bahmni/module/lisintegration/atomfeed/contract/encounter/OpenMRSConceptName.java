@@ -9,7 +9,7 @@ public class OpenMRSConceptName {
     public OpenMRSConceptName() {
     }
 
-    public OpenMRSConceptName(String name) {
+    public OpenMRSConceptName(final String name) {
         this.name = name;
     }
 

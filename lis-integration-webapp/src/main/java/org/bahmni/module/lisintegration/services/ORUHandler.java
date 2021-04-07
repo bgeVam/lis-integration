@@ -29,10 +29,9 @@ import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
-
 @Component
 public class ORUHandler implements ReceivingApplication {
-    private static final org.apache.log4j.Logger log = Logger.getLogger(ORUHandler.class);
+    private static final org.apache.log4j.Logger LOG = Logger.getLogger(ORUHandler.class);
 
     @Value("${provider.lab_system.uuid}")
     private String providerUUID;
@@ -53,27 +52,29 @@ public class ORUHandler implements ReceivingApplication {
     private SharedHapiContext sharedHapiContext;
 
     @Override
-    public Message processMessage(Message message, Map<String, Object> stringObjectMap) throws ReceivingApplicationException, HL7Exception {
+    public Message processMessage(Message message, Map<String, Object> stringObjectMap)
+            throws ReceivingApplicationException, HL7Exception {
         try {
-            log.info(message.encode());
-            log.info("--------------------");
+            LOG.info(message.encode());
+            LOG.info("--------------------");
 
             ORU_R01 oruR01 = (ORU_R01) message;
             HapiContext hapiContext = sharedHapiContext.getHapiContext();
-            
+
             String encodedMessage = hapiContext.getPipeParser().encode(message);
-            log.info("Received message:\n" + encodedMessage + "\n\n");
-            
+            LOG.info("Received message:\n" + encodedMessage + "\n\n");
+
             OpenMRSEncounter openMRSEncounter = new HL7ORUtoOpenMRSEncounterMapper().map(oruR01);
-            
+
             // Fetching test resault
             OpenMRSService service = new OpenMRSService();
             OpenMRSOrder openMRSOrder = service.getOrder(openMRSEncounter.getOrders().get(0).getUuid());
             String orderEncounter = service.getEncounterByUUID(openMRSOrder.getEncounter().getEncounterUuid());
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode encounterJSONNode = objectMapper.readTree(orderEncounter);
-            
-            fillOpenMRSEncounter(openMRSEncounter, openMRSOrder, encounterJSONNode, providerUUID, encounterLabResultUUID, encounterRoleUUID, orderEncounter);
+
+            fillOpenMRSEncounter(openMRSEncounter, openMRSOrder, encounterJSONNode, providerUUID,
+                    encounterLabResultUUID, encounterRoleUUID, orderEncounter);
 
             ResultEncounter result = new ResultMapper().map(openMRSEncounter);
 
@@ -85,37 +86,40 @@ public class ORUHandler implements ReceivingApplication {
             String urlUploadDocument = service.urlUploadDocument(uploadDocument);
             JsonNode urlJSON = objectMapper.readTree(urlUploadDocument);
             String image = urlJSON.path("url").getTextValue();
-            
-            String patientDocumentTypeUUID =  service.getPatientDocumentTypeUuid("Consultations/Summaries");
-            VisitDocument visitDocument = generateVisitDocument(openMRSEncounter, encounterJSONNode, image, patientDocumentTypeUUID, encounterPatientDocumentUUID);
-    
+
+            String patientDocumentTypeUUID = service.getPatientDocumentTypeUuid("Consultations/Summaries");
+            VisitDocument visitDocument = generateVisitDocument(openMRSEncounter, encounterJSONNode, image,
+                    patientDocumentTypeUUID, encounterPatientDocumentUUID);
+
             service.postVisitDocument(visitDocument);
-            
+
             return message.generateACK();
-        } catch(Throwable t) {
-            log.error("Throwable caught: ", t);
+        } catch (Throwable t) {
+            LOG.error("Throwable caught: ", t);
             throw new ReceivingApplicationException(t);
         }
     }
 
     @Override
     public boolean canProcess(Message message) {
-        log.info("ORUHandler.canProcess");
-        log.info(message);
+        LOG.info("ORUHandler.canProcess");
+        LOG.info(message);
         return true;
     }
 
-    static VisitDocument generateVisitDocument(OpenMRSEncounter openMRSEncounter, JsonNode encounterJSONNode, String image, String patientDocumentTypeUUID, String encounterPatientDocumentUUID) {
+    static VisitDocument generateVisitDocument(OpenMRSEncounter openMRSEncounter, JsonNode encounterJSONNode,
+            String image, String patientDocumentTypeUUID, String encounterPatientDocumentUUID) {
         Document document = new Document();
         document.setTestUuid(patientDocumentTypeUUID);
         document.setImage(image);
-   
+
         VisitDocument visitDocument = new VisitDocument();
         visitDocument.setPatientUuid(openMRSEncounter.getOrders().get(0).getPatient().getPatientUUID());
         visitDocument.setVisitTypeUuid(encounterJSONNode.path("visit").path("visitType").path("uuid").getTextValue());
         visitDocument.setVisitStartDate(encounterJSONNode.path("visit").path("startDatetime").getTextValue());
         visitDocument.setEncounterTypeUuid(encounterPatientDocumentUUID);
-        visitDocument.setProviderUuid(encounterJSONNode.path("encounterProviders").get(0).path("provider").path("uuid").getTextValue());
+        visitDocument.setProviderUuid(
+                encounterJSONNode.path("encounterProviders").get(0).path("provider").path("uuid").getTextValue());
         visitDocument.setVisitUuid(encounterJSONNode.path("visit").path("uuid").getTextValue());
         visitDocument.setLocationUuid(encounterJSONNode.path("location").path("uuid").getTextValue());
         visitDocument.setDocuments(Arrays.asList(document));
@@ -132,7 +136,9 @@ public class ORUHandler implements ReceivingApplication {
         return uploadDocument;
     }
 
-    static void fillOpenMRSEncounter(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder, JsonNode encounterJSONNode, String providerUUID, String encounterLabResultUUID, String encounterRoleUUID, String orderEncounter) throws JsonProcessingException, IOException {
+    static void fillOpenMRSEncounter(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder,
+            JsonNode encounterJSONNode, String providerUUID, String encounterLabResultUUID, String encounterRoleUUID,
+            String orderEncounter) throws JsonProcessingException, IOException {
         OpenMRSProvider provider = new OpenMRSProvider();
         provider.setUuid(providerUUID);
 

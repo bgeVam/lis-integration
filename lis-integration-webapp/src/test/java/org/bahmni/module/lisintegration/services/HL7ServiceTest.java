@@ -12,7 +12,9 @@ import org.bahmni.module.lisintegration.exception.HL7MessageException;
 import org.bahmni.module.lisintegration.model.Order;
 import org.bahmni.module.lisintegration.repository.OrderRepository;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+@RunWith(MockitoJUnitRunner.class)
 public class HL7ServiceTest {
 
     @Mock
@@ -44,18 +47,20 @@ public class HL7ServiceTest {
 
     @Test(expected = HL7MessageException.class)
     public void testShouldThrowExceptionWhenThereIsNoLISConceptSource() throws DataTypeException {
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource("some source", "123", "LabSet")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
+                .withConcept(buildConceptWithSource("some source", "123", "LabSet")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
         List<OpenMRSProvider> providers = getProvidersData();
 
         HL7Service hl7Service = new HL7Service();
-        hl7Service.createMessage(order,sample, patient, providers);
+        hl7Service.createMessage(order, sample, patient, providers);
     }
 
     @Test
     public void testShouldCreateHL7Message() throws DataTypeException {
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
+                .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
         List<OpenMRSProvider> providers = getProvidersData();
@@ -70,8 +75,11 @@ public class HL7ServiceTest {
     @Test
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
-                Order previousOrder = new Order(111, null, "someOrderUuid", "someTestName", "someTestPanel", "someTestUuid", null, "ORD-111", "Comment");
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest")).withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
+        Order previousOrder = new Order(111, null, "someOrderUuid", "someTestName", "someTestPanel", "someTestUuid",
+                null, "ORD-111", "Comment");
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222")
+                .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest"))
+                .withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
         List<OpenMRSProvider> providers = getProvidersData();
@@ -83,13 +91,15 @@ public class HL7ServiceTest {
         Assert.assertNotNull(hl7Message);
         assertEquals("CA", hl7Message.getORDER().getORC().getOrderControl().getValue());
         assertEquals("ORD-111", hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
-        assertEquals("someOrderUuid", hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
+        assertEquals("someOrderUuid",
+                hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
     }
 
     @Test(expected = HL7MessageException.class)
     public void testShouldThrowExceptionForOrderNumberWithSizeExceedingLimit() throws Exception {
 
-        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-11189067898900").withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
+        OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-11189067898900")
+                .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
         List<OpenMRSProvider> providers = getProvidersData();
@@ -98,14 +108,14 @@ public class HL7ServiceTest {
         hl7Service.createMessage(order, sample, patient, providers);
     }
 
-
     private OpenMRSConcept buildConceptWithSource(String conceptClassName, String lisCode, String conceptClass) {
         final OpenMRSConceptMapping mapping = new OpenMRSConceptMapping();
         mapping.setCode(lisCode);
         mapping.setName(lisCode);
         mapping.setSource(conceptClassName);
         mapping.setConceptClass(conceptClass);
-        return new OpenMRSConceptBuilder().addConceptMapping(mapping).addConceptName(lisCode).addConceptClass(conceptClass).build();
+        return new OpenMRSConceptBuilder().addConceptMapping(mapping).addConceptName(lisCode)
+                .addConceptClass(conceptClass).build();
     }
 
     private List<OpenMRSProvider> getProvidersData() {

@@ -31,7 +31,8 @@ public class QuartzCronScheduler {
     public QuartzCronScheduler() {
     }
 
-    public QuartzCronScheduler(Integer id, String name, Boolean enabled, String cronStatement, Integer startDelay) {
+    public QuartzCronScheduler(final Integer id, final String name, final Boolean enabled, final String cronStatement,
+            final Integer startDelay) {
         this.id = id;
         this.name = name;
         this.enabled = enabled;

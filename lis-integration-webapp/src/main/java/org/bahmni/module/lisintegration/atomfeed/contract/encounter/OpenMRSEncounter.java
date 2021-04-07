@@ -29,7 +29,8 @@ public class OpenMRSEncounter {
     public OpenMRSEncounter() {
     }
 
-    public OpenMRSEncounter(String encounterUuid, String patientUuid, List<OpenMRSOrder> orders, List<OpenMRSProvider> providers) {
+    public OpenMRSEncounter(final String encounterUuid, final String patientUuid, final List<OpenMRSOrder> orders,
+            final List<OpenMRSProvider> providers) {
 
         this.encounterUuid = encounterUuid;
         this.orders = orders;
@@ -51,7 +52,7 @@ public class OpenMRSEncounter {
 
     public List<OpenMRSOrder> getAcceptableTestOrders(List<OrderType> acceptableOrderTypes) {
         List<OpenMRSOrder> acceptableNewOrders = new ArrayList<OpenMRSOrder>();
-        for(OpenMRSOrder openMRSOrder : this.orders) {
+        for (OpenMRSOrder openMRSOrder : this.orders) {
             OrderType acceptableOrderType = findOrderType(acceptableOrderTypes, openMRSOrder.getOrderType());
             if (acceptableOrderType != null) {
                 acceptableNewOrders.add(openMRSOrder);

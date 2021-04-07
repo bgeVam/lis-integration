@@ -21,7 +21,8 @@ public class EncounterFeedJob implements FeedJob {
     private AtomFeedClientFactory atomFeedClientFactory;
 
     @Autowired
-    public EncounterFeedJob(EncounterFeedWorker encounterFeedWorker, AtomFeedClientFactory atomFeedClientFactory) {
+    public EncounterFeedJob(final EncounterFeedWorker encounterFeedWorker,
+            final AtomFeedClientFactory atomFeedClientFactory) {
         this.encounterFeedWorker = encounterFeedWorker;
         this.atomFeedClientFactory = atomFeedClientFactory;
     }
@@ -31,7 +32,7 @@ public class EncounterFeedJob implements FeedJob {
 
     @Override
     public void process() throws InterruptedException {
-        if(atomFeedClient == null){
+        if (atomFeedClient == null) {
             atomFeedClient = atomFeedClientFactory.get(OPENMRS_ENCOUNTER_FEED_NAME, encounterFeedWorker);
         }
         logger.info("Processing feed...");

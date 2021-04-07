@@ -4,7 +4,11 @@ import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 
-public class WebClientFactory {
+public final class WebClientFactory {
+
+    private WebClientFactory() {
+        throw new IllegalStateException("WebClientFactory class");
+      }
 
     public static HttpClient getClient() {
         ConnectionDetails connectionDetails = org.bahmni.module.lisintegration.atomfeed.client.ConnectionDetails.get();

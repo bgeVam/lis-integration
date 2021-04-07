@@ -3,8 +3,6 @@ package org.bahmni.module.lisintegration.atomfeed.builders;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptMapping;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
-import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptClass;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class OpenMRSConceptBuilder {
     }
 
     public OpenMRSConceptBuilder addConceptMapping(OpenMRSConceptMapping mapping) {
-        if(openMRSConcept.getMappings() == null) {
+        if (openMRSConcept.getMappings() == null) {
             openMRSConcept.setMappings(new ArrayList<OpenMRSConceptMapping>());
         }
         openMRSConcept.getMappings().add(mapping);
