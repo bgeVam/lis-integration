@@ -37,12 +37,12 @@ public class HL7ORUtoOpenMRSEncounterMapper {
 
                 if ("Patient Document".equals(obr.getUniversalServiceIdentifier().getText().getValue())) {
                     for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
-                        OBX obx_document = observation.getOBX();
+                        OBX obxDocument = observation.getOBX();
 
                         PatientDocument patientDocument = new PatientDocument();
-                        patientDocument.setConctent(obx_document.getObservationValue()[0].encode());
+                        patientDocument.setConctent(obxDocument.getObservationValue()[0].encode());
                         patientDocument.setEncounterTypeName(obr.getUniversalServiceIdentifier().getText().getValue());
-                        patientDocument.setDateTime(obx_document.getObservationValue()[0].encode());
+                        patientDocument.setDateTime(obxDocument.getObservationValue()[0].encode());
 
                         result.setPatientDocument(patientDocument);
                     }

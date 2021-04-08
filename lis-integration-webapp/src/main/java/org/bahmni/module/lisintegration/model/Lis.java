@@ -1,6 +1,5 @@
 package org.bahmni.module.lisintegration.model;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "lis")
-public class Lis extends BaseModel{
+public class Lis extends BaseModel {
 
     @Id
     @Column(name = "id", unique = true)
@@ -32,7 +31,8 @@ public class Lis extends BaseModel{
     @Column(name = "timeout")
     private Integer timeout;
 
-    public Lis(Integer id, String name, String description, String ip, Integer port, Integer timeout) {
+    public Lis(final Integer id, final String name, final String description, final String ip, final Integer port,
+            final Integer timeout) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -94,13 +94,13 @@ public class Lis extends BaseModel{
 
     @Override
     public String toString() {
-        return "Lis{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", ip='" + ip + '\'' +
-                ", port=" + port +
-                ", timeout=" + timeout +
-                '}';
+        return "Lis{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", ip='" + ip + '\''
+                + ", port=" + port
+                + ", timeout=" + timeout
+                + '}';
     }
 }

@@ -44,8 +44,8 @@ public class OpenMRSOrderBuilder {
         return this;
     }
 
-    public OpenMRSOrderBuilder withDiscontinued(){
-        openMRSOrder.setAction(openMRSOrder.ACTION_DISCONTINUE);
+    public OpenMRSOrderBuilder withDiscontinued() {
+        openMRSOrder.setAction(OpenMRSOrder.ACTION_DISCONTINUE);
         return this;
     }
 

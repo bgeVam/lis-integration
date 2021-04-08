@@ -9,7 +9,7 @@ public class OpenMRSConceptClass {
     public OpenMRSConceptClass() {
     }
 
-    public OpenMRSConceptClass(String conceptClass) {
+    public OpenMRSConceptClass(final String conceptClass) {
         this.conceptClass = conceptClass;
     }
 

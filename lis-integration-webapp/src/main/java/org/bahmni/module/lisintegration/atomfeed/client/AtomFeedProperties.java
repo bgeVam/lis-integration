@@ -3,7 +3,7 @@ package org.bahmni.module.lisintegration.atomfeed.client;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class AtomFeedProperties {
+public final class AtomFeedProperties {
 
 
     private static final String FEED_CONNECT_TIMEOUT = "feed.connectionTimeoutInMilliseconds";
@@ -39,17 +39,12 @@ public class AtomFeedProperties {
         }
     }
 
-    public static AtomFeedProperties getInstance() {
+    public static synchronized AtomFeedProperties getInstance() {
         if (atomFeedProperties == null) {
-            synchronized (AtomFeedProperties.class) {
-                if (atomFeedProperties == null) {
-                    atomFeedProperties = new AtomFeedProperties();
-                }
-            }
+            atomFeedProperties = new AtomFeedProperties();
         }
-        return atomFeedProperties;
+            return atomFeedProperties;
     }
-
 
     public String getProperty(String propertyName) {
         return properties.getProperty(propertyName);

@@ -36,7 +36,9 @@ public class OpenMRSOrder {
         this.action = ACTION_NEW;
     }
 
-    public OpenMRSOrder(String uuid, String orderType, OpenMRSConcept concept, Boolean voided, String action, String previousOrderUuid) {
+    public OpenMRSOrder(final String uuid, final String orderType, final OpenMRSConcept concept, final Boolean voided,
+            final String action,
+            final String previousOrderUuid) {
         this.uuid = uuid;
         this.orderType = orderType;
         this.voided = voided;
@@ -70,8 +72,9 @@ public class OpenMRSOrder {
     }
 
     public Boolean isVoided() {
-        if (voided == null)
+        if (voided == null) {
             return false;
+        }
         return voided;
     }
 
@@ -96,9 +99,10 @@ public class OpenMRSOrder {
     }
 
     public OpenMRSConceptMapping getLisConceptSource() {
-        for (OpenMRSConceptMapping mapping : concept.getMappings()){
-            if(mapping.getSource().equals(Constants.LIS_CONCEPT_SOURCE_NAME))
+        for (OpenMRSConceptMapping mapping : concept.getMappings()) {
+            if (mapping.getSource().equals(Constants.LIS_CONCEPT_SOURCE_NAME)) {
                 return mapping;
+            }
         }
         return null;
     }

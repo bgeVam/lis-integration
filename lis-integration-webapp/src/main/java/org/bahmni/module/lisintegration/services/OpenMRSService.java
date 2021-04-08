@@ -18,7 +18,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.bahmni.module.lisintegration.atomfeed.client.ConnectionDetails;
 import org.bahmni.module.lisintegration.atomfeed.client.WebClientFactory;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
@@ -42,8 +41,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OpenMRSService {
 
-    String patientRestUrl = "/openmrs/ws/rest/v1/patient/";
-    private static final Logger log = Logger.getLogger(OpenMRSService.class);
+    private String patientRestUrl = "/openmrs/ws/rest/v1/patient/";
 
     public OpenMRSEncounter getEncounter(String encounterUrl) throws IOException {
         HttpClient webClient = WebClientFactory.getClient();
@@ -57,23 +55,24 @@ public class OpenMRSService {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
-        String patientJSON = webClient.get(URI.create(urlPrefix + patientRestUrl + patientUuid+"?v=full"));
+        String patientJSON = webClient.get(URI.create(urlPrefix + patientRestUrl + patientUuid + "?v=full"));
         return new OpenMRSPatientMapper().map(patientJSON);
     }
+
     public Sample getSample(String conceptUUID) throws IOException {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
         String labSamplesConceptAPI = "/openmrs/ws/rest/v1/concept/8160a011-3f10-11e4-adec-0800271c1b75?v=full";
 
-        String labSamplesConcept = webClient.get(URI.create(urlPrefix  + labSamplesConceptAPI));
+        String labSamplesConcept = webClient.get(URI.create(urlPrefix + labSamplesConceptAPI));
         ObjectMapper labSamplesObjectMapper = ObjectMapperRepository.objectMapper;
-        JsonNode labSamplesJSON  = labSamplesObjectMapper.readTree(labSamplesConcept);
+        JsonNode labSamplesJSON = labSamplesObjectMapper.readTree(labSamplesConcept);
         JsonNode samples = labSamplesJSON.path("setMembers");
         JsonNode sampleJSON = null;
 
-        for(JsonNode sample: samples) {
+        for (JsonNode sample : samples) {
             JsonNode sampleMembers = sample.path("setMembers");
-            for (JsonNode sampleMember: sampleMembers) {
+            for (JsonNode sampleMember : sampleMembers) {
                 if (conceptUUID.equals(sampleMember.path("uuid").asText())) {
                     sampleJSON = sample.path("name");
                     break;
@@ -100,7 +99,7 @@ public class OpenMRSService {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
-        String orderAPI = "/openmrs/ws/rest/v1/order/"+ orderUUID;
+        String orderAPI = "/openmrs/ws/rest/v1/order/" + orderUUID;
         String orderJSON = webClient.get(URI.create(urlPrefix + orderAPI));
 
         return new OrderMapper().map(orderJSON);
@@ -110,7 +109,7 @@ public class OpenMRSService {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
-        String encounterAPI = "/openmrs/ws/rest/v1/encounter/"+ encounterUUID + "?v=full";
+        String encounterAPI = "/openmrs/ws/rest/v1/encounter/" + encounterUUID + "?v=full";
         String encounterJSON = webClient.get(URI.create(urlPrefix + encounterAPI));
 
         return encounterJSON;
@@ -127,31 +126,34 @@ public class OpenMRSService {
         HttpPost httpPost = new HttpPost(URI.create(urlPrefix + "/openmrs/ws/rest/v1/encounter"));
 
         fillHttpPostRequest(resultObject, httpPost);
-        client.execute(httpPost); 
+        client.execute(httpPost);
         client.close();
     }
 
-    public String urlUploadDocument(UploadDocument uploadDocument) throws AuthenticationException, ClientProtocolException, IOException {
+    public String urlUploadDocument(UploadDocument uploadDocument)
+            throws AuthenticationException, ClientProtocolException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String resultObject = objectMapper.writeValueAsString(uploadDocument);
         String response = new String();
         CloseableHttpClient client = HttpClients.createDefault();
 
         String urlPrefix = getURLPrefix();
-        HttpPost httpPost = new HttpPost(URI.create(urlPrefix  + "/openmrs/ws/rest/v1/bahmnicore/visitDocument/uploadDocument"));
+        HttpPost httpPost = new HttpPost(
+                URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument/uploadDocument"));
 
         fillHttpPostRequest(resultObject, httpPost);
 
         HttpResponse httpResponse = client.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
-        if(responseEntity!=null) {
+        if (responseEntity != null) {
             response = EntityUtils.toString(responseEntity);
         }
         client.close();
         return response;
     }
 
-    public String postVisitDocument(VisitDocument visitDocument) throws AuthenticationException, ClientProtocolException, IOException {
+    public String postVisitDocument(VisitDocument visitDocument)
+            throws AuthenticationException, ClientProtocolException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String resultObject = objectMapper.writeValueAsString(visitDocument);
         String response = new String();
@@ -164,7 +166,7 @@ public class OpenMRSService {
 
         HttpResponse httpResponse = client.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
-        if(responseEntity!=null) {
+        if (responseEntity != null) {
             response = EntityUtils.toString(responseEntity);
         }
         client.close();
@@ -176,14 +178,14 @@ public class OpenMRSService {
         String urlPrefix = getURLPrefix();
 
         String concpetPatientDocumentAPI = "/openmrs/ws/rest/v1/concept/c46896fd-3f10-11e4-adec-0800271c1b75?v=full";
-        String patientDocumentConcpet = webClient.get(URI.create(urlPrefix  + concpetPatientDocumentAPI));
+        String patientDocumentConcpet = webClient.get(URI.create(urlPrefix + concpetPatientDocumentAPI));
 
         ObjectMapper concpetPatientDocumentMapper = ObjectMapperRepository.objectMapper;
-        JsonNode patientDocumentJSON  = concpetPatientDocumentMapper.readTree(patientDocumentConcpet);
+        JsonNode patientDocumentJSON = concpetPatientDocumentMapper.readTree(patientDocumentConcpet);
         JsonNode documentTypes = patientDocumentJSON.path("setMembers");
         String documentTypeJSON = null;
 
-        for(JsonNode documentType: documentTypes) {
+        for (JsonNode documentType : documentTypes) {
             if (patinetDocumentType.equals(documentType.path("name").path("name").asText())) {
                 documentTypeJSON = documentType.path("uuid").getTextValue();
                 break;
@@ -192,7 +194,8 @@ public class OpenMRSService {
         return documentTypeJSON;
     }
 
-    private void fillHttpPostRequest(String resultObject, HttpPost httpPost)  throws UnsupportedEncodingException, AuthenticationException {
+    private void fillHttpPostRequest(String resultObject, HttpPost httpPost)
+            throws UnsupportedEncodingException, AuthenticationException {
         StringEntity entity = new StringEntity(resultObject);
         httpPost.setEntity(entity);
         httpPost.setHeader("Accept", "application/json");

@@ -16,11 +16,11 @@ public class Observation {
     private List<Observation> groupMembers = new ArrayList<Observation>();
     private Double value;
 
-    public  Observation () {
+    public  Observation() {
 
     }
 
-    public Observation(String obsDateTime, String concept, String order) {
+    public Observation(final String obsDateTime, final String concept, final String order) {
         this.obsDatetime = obsDateTime;
         this.concept = concept;
         this.order = order;

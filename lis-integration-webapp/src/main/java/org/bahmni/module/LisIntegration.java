@@ -25,7 +25,7 @@ public class LisIntegration extends SpringBootServletInitializer {
     CronJobRepository cronJobRepository;
 
     @RequestMapping("/")
-    String home() {
+    public String home() {
         return "LIS Integration module is up and running.";
     }
 

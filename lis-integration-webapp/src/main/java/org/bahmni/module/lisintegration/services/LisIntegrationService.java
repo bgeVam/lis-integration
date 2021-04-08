@@ -26,7 +26,7 @@ import java.util.List;
 
 @Component
 public class LisIntegrationService {
-    private static final org.apache.log4j.Logger log = Logger.getLogger(LisIntegrationService.class);
+    private static final org.apache.log4j.Logger LOG = Logger.getLogger(LisIntegrationService.class);
 
     @Value("${green.letters}")
     private String printGreen;
@@ -58,33 +58,36 @@ public class LisIntegrationService {
     private LisService lisService;
 
     @Autowired
-    public void setLisService(LisService lisService){
+    public final void setLisService(LisService lisService) {
         this.lisService = lisService;
         try {
-            log.info(printGreen + " Server is starting..." + printDefault);
+            LOG.info(printGreen + " Server is starting..." + printDefault);
             lisService.startServer();
-            log.info(printGreen + "Server has been started..." + printDefault);
+            LOG.info(printGreen + "Server has been started..." + printDefault);
         } catch (Exception e) {
-            log.error(printRed + "An error has occurred..." + printDefault);
+            LOG.error(printRed + "An error has occurred..." + printDefault);
         }
     }
 
-    public void processEncounter(OpenMRSEncounter openMRSEncounter) throws IOException, ParseException, HL7Exception, LLPException {
+    public void processEncounter(OpenMRSEncounter openMRSEncounter)
+            throws IOException, ParseException, HL7Exception, LLPException {
         OpenMRSPatient patient = openMRSService.getPatient(openMRSEncounter.getPatientUuid());
         List<OrderType> acceptableOrderTypes = orderTypeRepository.findAll();
 
         List<OpenMRSOrder> newAcceptableTestOrders = openMRSEncounter.getAcceptableTestOrders(acceptableOrderTypes);
         Collections.reverse(newAcceptableTestOrders);
-        for(OpenMRSOrder openMRSOrder : newAcceptableTestOrders) {
-            if(orderRepository.findByOrderUuid(openMRSOrder.getUuid()) == null) {
+        for (OpenMRSOrder openMRSOrder : newAcceptableTestOrders) {
+            if (orderRepository.findByOrderUuid(openMRSOrder.getUuid()) == null) {
                 OpenMRSConcept openMRSConcept = openMRSOrder.getConcept();
                 Sample sample = openMRSService.getSample(openMRSConcept.getUuid());
-                AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient, openMRSEncounter.getProviders());
+                AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient,
+                        openMRSEncounter.getProviders());
                 String response = lisService.sendMessage(request, openMRSOrder.getOrderType());
-                Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample, acceptableOrderTypes);
+                Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample,
+                        acceptableOrderTypes);
 
                 orderRepository.save(order);
-                orderDetailsRepository.save(new OrderDetails(order, request.encode(),response));
+                orderDetailsRepository.save(new OrderDetails(order, request.encode(), response));
             }
         }
     }

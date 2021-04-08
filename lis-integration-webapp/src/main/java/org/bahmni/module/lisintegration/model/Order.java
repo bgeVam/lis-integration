@@ -1,6 +1,5 @@
 package org.bahmni.module.lisintegration.model;
 
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -14,7 +13,7 @@ public class Order extends BaseModel {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="order_type_id", nullable=false)
+    @JoinColumn(name = "order_type_id", nullable = false)
     private OrderType orderType;
 
     @Column(name = "order_uuid", unique = true, nullable = false)
@@ -51,9 +50,11 @@ public class Order extends BaseModel {
     private String comment;
 
     @Column(name = "sample")
-    private  String sample;
+    private String sample;
 
-    public Order(int id, OrderType orderType, String orderUuid, String testName, String testPanel, String testUuid, String result, String orderNumber, String comment) {
+    public Order(final int id, final OrderType orderType, final String orderUuid, final String testName,
+            final String testPanel, final String testUuid,
+            final String result, final String orderNumber, final String comment) {
         this.id = id;
         this.orderType = orderType;
         this.orderUuid = orderUuid;

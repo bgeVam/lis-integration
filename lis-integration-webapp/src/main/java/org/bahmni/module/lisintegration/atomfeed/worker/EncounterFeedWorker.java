@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EncounterFeedWorker implements EventWorker {
 
-    private static final Logger logger = LoggerFactory.getLogger(EncounterFeedWorker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EncounterFeedWorker.class);
 
     @Autowired
     private LisIntegrationService lisIntegrationService;
@@ -22,28 +22,26 @@ public class EncounterFeedWorker implements EventWorker {
     @Autowired
     private OpenMRSService openMRSService;
 
-    public EncounterFeedWorker() {
-    }
-
     @Override
     public void process(Event event) {
         String bedAssignment = "Bed-Assignment";
         try {
-            if(event.getTitle() == null || !event.getTitle().equals(bedAssignment)) {
-                logger.info("Getting encounter data...");
+            if (event.getTitle() == null || !event.getTitle().equals(bedAssignment)) {
+                LOG.info("Getting encounter data...");
                 String encounterUri = event.getContent();
                 OpenMRSEncounter encounter = openMRSService.getEncounter(encounterUri);
-                if(encounter.hasOrders()) {
+                if (encounter.hasOrders()) {
                     lisIntegrationService.processEncounter(encounter);
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed send order to LIS", e);
+            LOG.error("Failed send order to LIS", e);
             throw new RuntimeException("Failed send order to LIS", e);
         }
     }
 
     @Override
     public void cleanUp(Event event) {
+        // The type EncounterFeedWorker must inherit a cleanUp method
     }
 }

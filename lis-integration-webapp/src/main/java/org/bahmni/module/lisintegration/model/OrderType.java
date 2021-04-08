@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "order_type")
-public class OrderType extends BaseModel{
+public class OrderType extends BaseModel {
 
     @Id
     @Column(name = "id", unique = true)
@@ -16,10 +16,10 @@ public class OrderType extends BaseModel{
     private String name;
 
     @ManyToOne
-    @JoinColumn(name="lis_id")
+    @JoinColumn(name = "lis_id")
     private Lis lis;
 
-    public OrderType(int id, String name, Lis lis) {
+    public OrderType(final int id, final String name, final Lis lis) {
         this.id = id;
         this.name = name;
         this.lis = lis;

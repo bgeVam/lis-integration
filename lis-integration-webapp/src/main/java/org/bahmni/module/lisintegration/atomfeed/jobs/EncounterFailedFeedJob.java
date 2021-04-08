@@ -16,13 +16,14 @@ import org.springframework.stereotype.Component;
 public class EncounterFailedFeedJob implements FeedJob {
     private static final String OPENMRS_ENCOUNTER_FEED_NAME = "openmrs.encounter.feed.uri";
     private final Logger logger = LoggerFactory.getLogger(EncounterFailedFeedJob.class);
-    private  EncounterFeedWorker encounterFeedWorker;
-    private  AtomFeedClientFactory atomFeedClientFactory;
+    private EncounterFeedWorker encounterFeedWorker;
+    private AtomFeedClientFactory atomFeedClientFactory;
 
     private FeedClient atomFeedClient;
 
     @Autowired
-    public EncounterFailedFeedJob(EncounterFeedWorker encounterFeedWorker, AtomFeedClientFactory atomFeedClientFactory) {
+    public EncounterFailedFeedJob(final EncounterFeedWorker encounterFeedWorker,
+            final AtomFeedClientFactory atomFeedClientFactory) {
         this.encounterFeedWorker = encounterFeedWorker;
         this.atomFeedClientFactory = atomFeedClientFactory;
     }
@@ -32,7 +33,7 @@ public class EncounterFailedFeedJob implements FeedJob {
 
     @Override
     public void process() {
-        if(atomFeedClient == null){
+        if (atomFeedClient == null) {
             atomFeedClient = atomFeedClientFactory.get(OPENMRS_ENCOUNTER_FEED_NAME, encounterFeedWorker);
         }
         logger.info("Processing failed event.");

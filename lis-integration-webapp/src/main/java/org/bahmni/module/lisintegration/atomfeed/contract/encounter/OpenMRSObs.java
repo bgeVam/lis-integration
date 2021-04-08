@@ -14,13 +14,13 @@ public class OpenMRSObs {
     public OpenMRSObs() {
     }
 
-    public OpenMRSObs(String obsDateTime, OpenMRSConcept concept, OpenMRSOrder order) {
+    public OpenMRSObs(final String obsDateTime, final OpenMRSConcept concept, final OpenMRSOrder order) {
         this.obsDateTime = obsDateTime;
         this.concept = concept;
         this.order = order;
     }
 
-    public OpenMRSObs(String obsDateTime, OpenMRSConcept concept, Double value) {
+    public OpenMRSObs(final String obsDateTime, final OpenMRSConcept concept, final Double value) {
         this.obsDateTime = obsDateTime;
         this.concept = concept;
         this.value = value;

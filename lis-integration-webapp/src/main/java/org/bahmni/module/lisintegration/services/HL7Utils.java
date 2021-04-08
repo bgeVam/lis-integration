@@ -9,13 +9,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class HL7Utils {
+public final class HL7Utils {
+
+    private HL7Utils() {
+        throw new IllegalStateException("HL7Utils class");
+    }
 
     public static DateFormat getHl7DateFormat() {
         return new SimpleDateFormat("yyyyMMddHHmmss");
     }
 
-    public static MSH populateMessageHeader(MSH msh, Date dateTime, String messageType, String triggerEvent, String sendingFacility) throws DataTypeException {
+    public static MSH populateMessageHeader(MSH msh, Date dateTime, String messageType, String triggerEvent,
+            String sendingFacility) throws DataTypeException {
         msh.getFieldSeparator().setValue("|");
         msh.getEncodingCharacters().setValue("^~\\&");
         msh.getSendingFacility().getHd1_NamespaceID().setValue(sendingFacility);
@@ -24,8 +29,8 @@ public class HL7Utils {
         msh.getDateTimeOfMessage().getTs1_Time().setValue(getHl7DateFormat().format(dateTime));
         msh.getMessageType().getMessageCode().setValue(messageType);
         msh.getMessageType().getTriggerEvent().setValue(triggerEvent);
-        //  TODO: do we need to send Message Control ID?
-        msh.getProcessingID().getProcessingID().setValue("P");  // stands for production (?)
+        // do we need to send Message Control ID?
+        msh.getProcessingID().getProcessingID().setValue("P"); // stands for production (?)
         msh.getVersionID().getVersionID().setValue("2.5");
 
         return msh;
@@ -42,7 +47,8 @@ public class HL7Utils {
         return ack;
     }
 
-    public static ACK generateErrorACK(String messageControlId, String sendingFacility, String errorMessage) throws DataTypeException {
+    public static ACK generateErrorACK(String messageControlId, String sendingFacility, String errorMessage)
+            throws DataTypeException {
         ACK ack = new ACK();
 
         populateMessageHeader(ack.getMSH(), new Date(), "ACK", null, sendingFacility);

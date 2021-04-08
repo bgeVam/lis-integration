@@ -11,7 +11,7 @@ public class ResultEncounter {
     private String visit;
     private String encounterType;
     private String encounterRole;
-    private List<Observation> Obs;
+    private List<Observation> obs;
     private List<EncounterProvider> encounterProviders;
 
     public List<EncounterProvider> getEncounterProviders() {
@@ -56,11 +56,11 @@ public class ResultEncounter {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public List<Observation> getObs() {
-        return Obs;
+        return obs;
     }
 
     public void setObs(List<Observation> obs) {
-        Obs = obs;
+        this.obs = obs;
     }
 
     public String getProvider() {
