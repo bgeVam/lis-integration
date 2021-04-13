@@ -25,7 +25,21 @@ public class OpenMRSOrder {
     private OpenMRSEncounter encounter;
 
     public String getUrgency() {
-        return urgency;
+        String statusPriority = null;
+        if ("STAT".equals(urgency)) {
+            statusPriority = "S";
+        } else if ("AS SOON AS POSSIBLE".equals(urgency)) {
+            statusPriority = "A";
+        } else if ("ROUTINE".equals(urgency)) {
+            statusPriority = "R";
+        } else if ("PREOPERATIVE".equals(urgency)) {
+            statusPriority = "P";
+        } else if ("TIMING CRITICAL".equals(urgency)) {
+            statusPriority = "T";
+        } else {
+            statusPriority = urgency;
+        }
+        return statusPriority;
     }
 
     public void setUrgency(String urgency) {
