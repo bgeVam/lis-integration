@@ -1,5 +1,8 @@
 package org.bahmni.module.lisintegration.services;
 
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.util.EntityUtils;
 import org.bahmni.module.lisintegration.atomfeed.*;
 import org.bahmni.module.lisintegration.atomfeed.client.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.*;
@@ -28,6 +31,9 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
 
     @Mock
     private HttpClient webClient;
+
+    @Mock
+    private HttpPost httpPost;
 
     @Mock
     private org.bahmni.webclients.ConnectionDetails connectionDetails;
@@ -109,5 +115,20 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         OpenMRSOrder order = new OpenMRSService().getOrder("5330e5d0-f134-45d4-8615-f5462492481e");
         
         assertEquals("5330e5d0-f134-45d4-8615-f5462492481e", order.getUuid());
+    }
+
+    @Test
+    public void fillHttpPostRequestTest() throws Exception{
+
+        httpPost = new HttpPost(new URI("http://localhost:8051"));
+        OpenMRSService service = new OpenMRSService();
+        service.fillHttpPostRequest("{\"name\": \"vsk\"}", httpPost);
+        Header[] contentType = httpPost.getHeaders("Content-type");
+
+        assertNotNull(httpPost);
+        assertEquals("POST",  httpPost.getMethod());
+        assertEquals("application/json",  contentType[0].getValue());
+        assertEquals("http://localhost:8051",  httpPost.getURI().toString());
+        assertEquals("{\"name\": \"vsk\"}", EntityUtils.toString(httpPost.getEntity()));
     }
 }
