@@ -17,6 +17,15 @@ public class OpenMRSEncounter {
     private String encounterRole;
     private Visit visit;
     private PatientDocument patientDocument;
+    private boolean panel;
+
+    public boolean isPanel() {
+        return this.panel;
+    }
+
+    public void setPanel(boolean panel) {
+        this.panel = panel;
+    }
 
     public PatientDocument getPatientDocument() {
         return this.patientDocument;

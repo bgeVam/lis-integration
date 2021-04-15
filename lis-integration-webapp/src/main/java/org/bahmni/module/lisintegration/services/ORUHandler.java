@@ -2,10 +2,12 @@ package org.bahmni.module.lisintegration.services;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Document;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
@@ -76,6 +78,7 @@ public class ORUHandler implements ReceivingApplication {
             fillOpenMRSEncounter(openMRSEncounter, openMRSOrder, encounterJSONNode, providerUUID,
                     encounterLabResultUUID, encounterRoleUUID, orderEncounter);
 
+            fillObservation(openMRSEncounter, openMRSOrder);
             ResultEncounter result = new ResultMapper().map(openMRSEncounter);
 
             service.postResultEncounter(result);
@@ -152,9 +155,40 @@ public class ORUHandler implements ReceivingApplication {
 
         Visit visit = new Visit();
         visit.setUuid(encounterJSONNode.path("visit").path("uuid").getTextValue());
-
         openMRSEncounter.setVisit(visit);
-        openMRSEncounter.getObs().get(0).getConcept().setUuid(openMRSOrder.getConcept().getUuid());
-        openMRSEncounter.getObs().get(0).getGroupMembers().get(0).getConcept().setUuid(openMRSOrder.getConceptUUID());
+    }
+    static void fillObservation(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder) throws IOException {
+        ORUHandler oruHandler = new ORUHandler();
+        OpenMRSService openMRSService = new OpenMRSService();
+        // fill observation for Panel
+        if (openMRSEncounter.isPanel()) {
+            List<OpenMRSConcept> listOfTests = openMRSService.getTestsOfPanel(openMRSOrder.getConcept().getUuid());
+
+            for (int concept = 0; concept < openMRSEncounter.getObs().get(0).getGroupMembers().size(); concept++) {
+                String name = openMRSEncounter.getObs().get(0).getGroupMembers().get(concept).getConcept().getName()
+                        .getName();
+                openMRSEncounter.getObs().get(0).getGroupMembers().get(concept).getConcept()
+                        .setUuid(oruHandler.getUuidOfConcept(name, listOfTests));
+            }
+            OpenMRSConcept openMRSConcept = new OpenMRSConcept();
+            openMRSConcept.setUuid(openMRSOrder.getConcept().getUuid());
+            openMRSEncounter.getObs().get(0).setConcept(openMRSConcept);
+        // fill observation for Test
+        } else {
+            openMRSEncounter.getObs().get(0).getConcept().setUuid(openMRSOrder.getConcept().getUuid());
+            openMRSEncounter.getObs().get(0).getGroupMembers().get(0).getConcept()
+                    .setUuid(openMRSOrder.getConceptUUID());
+        }
+    }
+
+    public String getUuidOfConcept(String conceptName, List<OpenMRSConcept> conceptList) {
+        String conceptUuid = "";
+        for (OpenMRSConcept testConcept : conceptList) {
+            if (conceptName.equals(testConcept.getName().getName())) {
+                conceptUuid = testConcept.getUuid();
+                break;
+            }
+        }
+        return conceptUuid;
     }
 }

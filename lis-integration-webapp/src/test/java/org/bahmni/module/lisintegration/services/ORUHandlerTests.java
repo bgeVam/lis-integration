@@ -3,9 +3,12 @@ package org.bahmni.module.lisintegration.services;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSObs;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
@@ -41,7 +44,7 @@ public class ORUHandlerTests {
         openMRSPatient.setPatientUUID("UUID-TEST-UUID-TEST");
         OpenMRSOrder openMRSOrder = new OpenMRSOrder();
         openMRSOrder.setPatient(openMRSPatient);
-        openMRSEncounter.setOrders(Arrays.asList(openMRSOrder));;
+        openMRSEncounter.setOrders(Arrays.asList(openMRSOrder));
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode encounterJSONNode = objectMapper.readTree(orderEncounter);
 
@@ -101,7 +104,7 @@ public class ORUHandlerTests {
         JsonNode encounterJSONNode = objectMapper.readTree(orderEncounter);
         OpenMRSPatient openMRSPatient = new OpenMRSPatient();
         openMRSPatient.setPatientUUID("UUID-TEST-UUID-TEST");
-        OpenMRSOrder openMRSOrder = new OrderMapper().map(orderJSON);;
+        OpenMRSOrder openMRSOrder = new OrderMapper().map(orderJSON);
         OpenMRSConcept concept = new OpenMRSConcept();
         concept.setUuid("uuid");
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounter();
@@ -121,5 +124,20 @@ public class ORUHandlerTests {
         assertEquals("UUID-TEST-UUID-TEST", encounterRoleUUID);
         assertEquals("UUID-TEST-UUID-TEST", openMRSEncounter.getEncounterType());
         assertEquals("c4d93af6-2edc-4e3b-85fb-d94799af7d3a", openMRSEncounter.getOrders().get(0).getUuid());
+    }
+
+    @Test
+    public void getUuidOfConcept() {
+        List<OpenMRSConcept> listOfTests = new ArrayList<>();
+        OpenMRSConcept concept = new OpenMRSConcept();
+        OpenMRSConceptName conceptName = new OpenMRSConceptName();
+        ORUHandler oruHandler = new ORUHandler();
+
+        conceptName.setName("Leukocytes");
+        concept.setName(conceptName);
+        concept.setUuid("4e905b9d-83f6-43c6-b388-0e1f9490c39b");
+
+        listOfTests.add(concept);
+        assertEquals("4e905b9d-83f6-43c6-b388-0e1f9490c39b", oruHandler.getUuidOfConcept("Leukocytes", listOfTests));
     }
 }

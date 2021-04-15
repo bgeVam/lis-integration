@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
@@ -46,18 +48,22 @@ public class HL7ORUtoOpenMRSEncounterMapper {
 
                         result.setPatientDocument(patientDocument);
                     }
-                } else  {
+                } else {
                     ORC orc = orderObservation.getORC();
                     String fillerOrderNumber = orc.getFillerOrderNumber().getEntityIdentifier().getValue();
                     OpenMRSOrder order = new OpenMRSOrder();
                     order.setUuid(fillerOrderNumber);
                     result.setOrders(Arrays.asList(order));
 
+                    OpenMRSObs obs = new OpenMRSObs();
+                    List<OpenMRSObs> openMRSOBSArray = new ArrayList<OpenMRSObs>(
+                            orderObservation.getOBSERVATIONAll().size());
+                    String alternateText = obr.getUniversalServiceIdentifier().getAlternateText().getValue();
+
                     for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
                         OBX obx = observation.getOBX();
 
                         String observationIdentifier = obx.getObservationIdentifier().getText().getValue();
-                        OpenMRSObs obs = new OpenMRSObs();
                         OpenMRSConcept concept = new OpenMRSConcept();
                         concept.setName(new OpenMRSConceptName(observationIdentifier));
                         obs.setConcept(concept);
@@ -67,9 +73,21 @@ public class HL7ORUtoOpenMRSEncounterMapper {
 
                         // groupMembers
                         OpenMRSObs valueGroupMember = new OpenMRSObs();
-                        valueGroupMember.setConcept(concept);
-                        valueGroupMember.setValue(Double.valueOf(obx.getObservationValue()[0].encode()));
-                        obs.setGroupMembers(Arrays.asList(valueGroupMember));
+                        if ("Panel".equals(alternateText)) {
+                            result.setPanel(true);
+                            valueGroupMember.setConcept(concept);
+                            valueGroupMember.setValue(Double.valueOf(obx.getObservationValue()[0].encode()));
+                            openMRSOBSArray.add(valueGroupMember);
+                            obs.setGroupMembers(Arrays.asList(valueGroupMember));
+                        } else {
+                            valueGroupMember.setConcept(concept);
+                            valueGroupMember.setValue(Double.valueOf(obx.getObservationValue()[0].encode()));
+                            obs.setGroupMembers(Arrays.asList(valueGroupMember));
+                            result.setObs(Arrays.asList(obs));
+                        }
+                    }
+                    if ("Panel".equals(alternateText)) {
+                        obs.setGroupMembers(openMRSOBSArray);
                         result.setObs(Arrays.asList(obs));
                     }
                 }
@@ -85,5 +103,4 @@ public class HL7ORUtoOpenMRSEncounterMapper {
         SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         return outputDateFormat.format(date);
     }
-
 }

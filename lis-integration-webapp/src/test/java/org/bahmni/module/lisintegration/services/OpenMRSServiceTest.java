@@ -19,6 +19,7 @@ import org.powermock.core.classloader.annotations.*;
 import org.powermock.modules.junit4.*;
 
 import java.net.*;
+import java.util.List;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -130,5 +131,23 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         assertEquals("application/json",  contentType[0].getValue());
         assertEquals("http://localhost:8051",  httpPost.getURI().toString());
         assertEquals("{\"name\": \"vsk\"}", EntityUtils.toString(httpPost.getEntity()));
+    }
+
+    @Test
+    public void shouldGetTestsOfPanel() throws Exception {
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI(
+                "http://localhost:8050/openmrs/ws/rest/v1/concept/fc86f477-f040-4ce1-aa70-1697e6831752?v=full")))
+                        .thenReturn(new OpenMRSMapperBaseTest().deserialize("/conceptPanel.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/conceptPanel.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        List<OpenMRSConcept> testConcepts = new OpenMRSService()
+                .getTestsOfPanel("fc86f477-f040-4ce1-aa70-1697e6831752?v=full");
+
+        assertEquals("Leukocytes", testConcepts.get(0).getName().getName());
+        assertEquals("4e905b9d-83f6-43c6-b388-0e1f9490c39b", testConcepts.get(0).getUuid());
     }
 }
