@@ -194,7 +194,7 @@ public class OpenMRSService {
         return documentTypeJSON;
     }
 
-    private void fillHttpPostRequest(String resultObject, HttpPost httpPost)
+    void fillHttpPostRequest(String resultObject, HttpPost httpPost)
             throws UnsupportedEncodingException, AuthenticationException {
         StringEntity entity = new StringEntity(resultObject);
         httpPost.setEntity(entity);
