@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,6 +22,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.bahmni.module.lisintegration.atomfeed.client.ConnectionDetails;
 import org.bahmni.module.lisintegration.atomfeed.client.WebClientFactory;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
@@ -160,7 +164,8 @@ public class OpenMRSService {
         CloseableHttpClient client = HttpClients.createDefault();
 
         String urlPrefix = getURLPrefix();
-        HttpPost httpPost = new HttpPost(URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument"));
+        HttpPost httpPost = new HttpPost(
+            URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument"));
 
         fillHttpPostRequest(resultObject, httpPost);
 
@@ -203,5 +208,28 @@ public class OpenMRSService {
 
         UsernamePasswordCredentials credUser = new UsernamePasswordCredentials("Superman", "Admin123");
         httpPost.addHeader(new BasicScheme().authenticate(credUser, httpPost, null));
+    }
+
+    public List<OpenMRSConcept> getTestsOfPanel(String conceptPanelUUID) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String conceptPanelAPI = "/openmrs/ws/rest/v1/concept/" + conceptPanelUUID + "?v=full";
+        String conceptPanelContent = webClient.get(URI.create(urlPrefix + conceptPanelAPI));
+
+        ObjectMapper testsObjectMapper = ObjectMapperRepository.objectMapper;
+        JsonNode conceptPanelJSON  = testsObjectMapper.readTree(conceptPanelContent);
+        JsonNode testsOfPanel = conceptPanelJSON.path("setMembers");
+        List<OpenMRSConcept> openMRSConceptsList = new ArrayList<OpenMRSConcept>(testsOfPanel.size());
+
+        for (JsonNode test : testsOfPanel) {
+            OpenMRSConcept testConcept = new OpenMRSConcept();
+            OpenMRSConceptName openMRSConceptName = new OpenMRSConceptName();
+            openMRSConceptName.setName(test.path("name").path("name").asText());
+
+            testConcept.setName(openMRSConceptName);
+            testConcept.setUuid(test.path("uuid").asText());
+            openMRSConceptsList.add(testConcept);
+        }
+        return openMRSConceptsList;
     }
 }
