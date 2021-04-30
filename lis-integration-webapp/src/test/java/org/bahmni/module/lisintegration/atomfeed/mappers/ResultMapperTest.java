@@ -49,7 +49,7 @@ public class ResultMapperTest extends OpenMRSMapperBaseTest {
 
         OpenMRSEncounter encounter = new OpenMRSService().getEncounter("/encounter/1");
         OpenMRSObs openMRSObs = new OpenMRSObs();
-        
+
         OpenMRSConcept concept = new OpenMRSConcept();
         concept.setUuid("uuid-test-uuid-test-concpet");
         OpenMRSOrder order = new OpenMRSOrder();
