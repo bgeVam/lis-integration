@@ -53,6 +53,9 @@ public class ORUHandler implements ReceivingApplication {
     @Autowired
     private SharedHapiContext sharedHapiContext;
 
+    @Autowired
+    private OpenMRSService openMRSService;
+
     @Override
     public Message processMessage(Message message, Map<String, Object> stringObjectMap)
             throws ReceivingApplicationException, HL7Exception {
@@ -69,9 +72,8 @@ public class ORUHandler implements ReceivingApplication {
             OpenMRSEncounter openMRSEncounter = new HL7ORUtoOpenMRSEncounterMapper().map(oruR01);
 
             // Fetching test resault
-            OpenMRSService service = new OpenMRSService();
-            OpenMRSOrder openMRSOrder = service.getOrder(openMRSEncounter.getOrders().get(0).getUuid());
-            String orderEncounter = service.getEncounterByUUID(openMRSOrder.getEncounter().getEncounterUuid());
+            OpenMRSOrder openMRSOrder = openMRSService.getOrder(openMRSEncounter.getOrders().get(0).getUuid());
+            String orderEncounter = openMRSService.getEncounterByUUID(openMRSOrder.getEncounter().getEncounterUuid());
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode encounterJSONNode = objectMapper.readTree(orderEncounter);
 
@@ -81,20 +83,20 @@ public class ORUHandler implements ReceivingApplication {
             fillObservation(openMRSEncounter, openMRSOrder);
             ResultEncounter result = new ResultMapper().map(openMRSEncounter);
 
-            service.postResultEncounter(result);
+            openMRSService.postResultEncounter(result);
 
             // Fetching patient document
             UploadDocument uploadDocument = generateUploadDocument(openMRSEncounter, formatFilePDF);
 
-            String urlUploadDocument = service.urlUploadDocument(uploadDocument);
+            String urlUploadDocument = openMRSService.urlUploadDocument(uploadDocument);
             JsonNode urlJSON = objectMapper.readTree(urlUploadDocument);
             String image = urlJSON.path("url").getTextValue();
 
-            String patientDocumentTypeUUID = service.getPatientDocumentTypeUuid("Consultations/Summaries");
+            String patientDocumentTypeUUID = openMRSService.getPatientDocumentTypeUuid("Consultations/Summaries");
             VisitDocument visitDocument = generateVisitDocument(openMRSEncounter, encounterJSONNode, image,
                     patientDocumentTypeUUID, encounterPatientDocumentUUID);
 
-            service.postVisitDocument(visitDocument);
+            openMRSService.postVisitDocument(visitDocument);
 
             return message.generateACK();
         } catch (Throwable t) {

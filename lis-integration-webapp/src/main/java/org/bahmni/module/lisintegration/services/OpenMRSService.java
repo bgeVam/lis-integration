@@ -40,12 +40,23 @@ import org.bahmni.webclients.ObjectMapperRepository;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
+import org.apache.log4j.Logger;
 
 @Component
 public class OpenMRSService {
-
     private String patientRestUrl = "/openmrs/ws/rest/v1/patient/";
+    private static final org.apache.log4j.Logger LOG = Logger.getLogger(OpenMRSService.class);
+
+    @Value("${green.letters}")
+    private String printGreen;
+
+    @Value("${red.letters}")
+    private String printRed;
+
+    @Value("${default.letters}")
+    private String printDefault;
 
     public OpenMRSEncounter getEncounter(String encounterUrl) throws IOException {
         HttpClient webClient = WebClientFactory.getClient();
@@ -119,18 +130,33 @@ public class OpenMRSService {
         return encounterJSON;
     }
 
-    public void postResultEncounter(ResultEncounter resultEncounter) throws IOException, AuthenticationException {
+    public final void postResultEncounter(ResultEncounter resultEncounter)
+            throws IOException, ClientProtocolException, AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         String resultObject = objectMapper.writeValueAsString(resultEncounter);
-
+        String responseString = new String();
         CloseableHttpClient client = HttpClients.createDefault();
 
         String urlPrefix = getURLPrefix();
         HttpPost httpPost = new HttpPost(URI.create(urlPrefix + "/openmrs/ws/rest/v1/encounter"));
 
         fillHttpPostRequest(resultObject, httpPost);
-        client.execute(httpPost);
+        HttpResponse httpResponse = client.execute(httpPost);
+        HttpEntity responseEntity = httpResponse.getEntity();
+        Integer statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (responseEntity != null) {
+            responseString = EntityUtils.toString(responseEntity);
+            if (statusCode >= 200 && statusCode < 300) {
+                LOG.debug(printGreen + "Result was posted successfully!" + printDefault);
+                LOG.debug("HTTP Response Object: " + httpResponse);
+                LOG.debug("HTTP Response Body: " + responseString);
+            } else {
+                LOG.error(printRed + "Result was posted unsuccessfully!" + printDefault);
+                LOG.error("HTTP Response Object: " + httpResponse);
+                LOG.error("HTTP Response Body: " + responseString);
+            }
+        }
         client.close();
     }
 
