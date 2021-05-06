@@ -156,6 +156,8 @@ public class OpenMRSService {
                 LOG.error("HTTP Response Object: " + httpResponse);
                 LOG.error("HTTP Response Body: " + responseString);
             }
+        } else {
+            LOG.error(printRed + "Nothing received - responseEntity is null." + printDefault);
         }
         client.close();
     }
@@ -164,7 +166,7 @@ public class OpenMRSService {
             throws AuthenticationException, ClientProtocolException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String resultObject = objectMapper.writeValueAsString(uploadDocument);
-        String response = new String();
+        String responseString = new String();
         CloseableHttpClient client = HttpClients.createDefault();
 
         String urlPrefix = getURLPrefix();
@@ -172,14 +174,25 @@ public class OpenMRSService {
                 URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument/uploadDocument"));
 
         fillHttpPostRequest(resultObject, httpPost);
-
         HttpResponse httpResponse = client.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
+        Integer statusCode = httpResponse.getStatusLine().getStatusCode();
         if (responseEntity != null) {
-            response = EntityUtils.toString(responseEntity);
+            responseString = EntityUtils.toString(responseEntity);
+            if (statusCode >= 200 && statusCode < 300) {
+                LOG.debug(printGreen + "Document was uploaded successfully!" + printDefault);
+                LOG.debug("HTTP Response Object: " + httpResponse);
+                LOG.debug("HTTP Response Body: " + responseString);
+            } else {
+                LOG.error(printRed + "Document was uploaded unsuccessfully!" + printDefault);
+                LOG.error("HTTP Response Object: " + httpResponse);
+                LOG.error("HTTP Response Body: " + responseString);
+            }
+        } else {
+            LOG.error(printRed + "Nothing received - responseEntity is null." + printDefault);
         }
         client.close();
-        return response;
+        return responseString;
     }
 
     public String postVisitDocument(VisitDocument visitDocument)
@@ -194,7 +207,6 @@ public class OpenMRSService {
             URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument"));
 
         fillHttpPostRequest(resultObject, httpPost);
-
         HttpResponse httpResponse = client.execute(httpPost);
         HttpEntity responseEntity = httpResponse.getEntity();
         if (responseEntity != null) {
