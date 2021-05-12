@@ -29,7 +29,6 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
-import org.bahmni.module.lisintegration.atomfeed.contract.encounter.VisitDocument;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPatientMapper;
@@ -130,16 +129,28 @@ public class OpenMRSService {
         return encounterJSON;
     }
 
-    public final void postResultEncounter(ResultEncounter resultEncounter)
+    /**
+     * postResult is the method which is called for posting results of order and uploading document.
+     * Please see the {@link PostResult} for the interface implemented in three classes {@link ResultEncounter},
+     * {@link UploadDocument} and {@link VisitDocument}
+     * @param postResult used to determine how the url needs to be constructed
+     * @return responseString returns results from API
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws AuthenticationException
+     */
+    public String postResult(PostResult postResult)
             throws IOException, ClientProtocolException, AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-        String resultObject = objectMapper.writeValueAsString(resultEncounter);
+        String resultObject = objectMapper.writeValueAsString(postResult);
         String responseString = new String();
         CloseableHttpClient client = HttpClients.createDefault();
 
         String urlPrefix = getURLPrefix();
-        HttpPost httpPost = new HttpPost(URI.create(urlPrefix + "/openmrs/ws/rest/v1/encounter"));
+        String postURL = postResult.getPostUrl(urlPrefix);
+        URI uri = URI.create(postURL);
+        HttpPost httpPost = new HttpPost(uri.toString());
 
         fillHttpPostRequest(resultObject, httpPost);
         HttpResponse httpResponse = client.execute(httpPost);
@@ -147,73 +158,32 @@ public class OpenMRSService {
         Integer statusCode = httpResponse.getStatusLine().getStatusCode();
         if (responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
-            if (statusCode >= 200 && statusCode < 300) {
-                LOG.debug(printGreen + "Result was posted successfully!" + printDefault);
-                LOG.debug("HTTP Response Object: " + httpResponse);
-                LOG.debug("HTTP Response Body: " + responseString);
-            } else {
-                LOG.error(printRed + "Result was posted unsuccessfully!" + printDefault);
-                LOG.error("HTTP Response Object: " + httpResponse);
-                LOG.error("HTTP Response Body: " + responseString);
-            }
-        } else {
-            LOG.error(printRed + "Nothing received - responseEntity is null." + printDefault);
-        }
-        client.close();
-    }
-
-    public String urlUploadDocument(UploadDocument uploadDocument)
-            throws AuthenticationException, ClientProtocolException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String resultObject = objectMapper.writeValueAsString(uploadDocument);
-        String responseString = new String();
-        CloseableHttpClient client = HttpClients.createDefault();
-
-        String urlPrefix = getURLPrefix();
-        HttpPost httpPost = new HttpPost(
-                URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument/uploadDocument"));
-
-        fillHttpPostRequest(resultObject, httpPost);
-        HttpResponse httpResponse = client.execute(httpPost);
-        HttpEntity responseEntity = httpResponse.getEntity();
-        Integer statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (responseEntity != null) {
-            responseString = EntityUtils.toString(responseEntity);
-            if (statusCode >= 200 && statusCode < 300) {
-                LOG.debug(printGreen + "Document was uploaded successfully!" + printDefault);
-                LOG.debug("HTTP Response Object: " + httpResponse);
-                LOG.debug("HTTP Response Body: " + responseString);
-            } else {
-                LOG.error(printRed + "Document was uploaded unsuccessfully!" + printDefault);
-                LOG.error("HTTP Response Object: " + httpResponse);
-                LOG.error("HTTP Response Body: " + responseString);
+            if (postResult instanceof ResultEncounter) {
+                if (statusCode >= 200 && statusCode < 300) {
+                    LOG.debug(printGreen + " Result was posted successfully!" + printDefault);
+                    LOG.debug("HTTP Response Object: " + httpResponse);
+                    LOG.debug("HTTP Response Body: " + responseString);
+                } else {
+                    LOG.error(printRed + "Result was posted unsuccessfully!" + printDefault);
+                    LOG.error("HTTP Response Object: " + httpResponse);
+                    LOG.error("HTTP Response Body: " + responseString);
+                }
+            } else if (postResult instanceof UploadDocument) {
+                if (statusCode >= 200 && statusCode < 300) {
+                    LOG.debug(printGreen + "Document was posted successfully!" + printDefault);
+                    LOG.debug("HTTP Response Object: " + httpResponse);
+                    LOG.debug("HTTP Response Body: " + responseString);
+                } else {
+                    LOG.error(printRed + "Document was posted unsuccessfully!" + printDefault);
+                    LOG.error("HTTP Response Object: " + httpResponse);
+                    LOG.error("HTTP Response Body: " + responseString);
+                }
             }
         } else {
             LOG.error(printRed + "Nothing received - responseEntity is null." + printDefault);
         }
         client.close();
         return responseString;
-    }
-
-    public String postVisitDocument(VisitDocument visitDocument)
-            throws AuthenticationException, ClientProtocolException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String resultObject = objectMapper.writeValueAsString(visitDocument);
-        String response = new String();
-        CloseableHttpClient client = HttpClients.createDefault();
-
-        String urlPrefix = getURLPrefix();
-        HttpPost httpPost = new HttpPost(
-            URI.create(urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument"));
-
-        fillHttpPostRequest(resultObject, httpPost);
-        HttpResponse httpResponse = client.execute(httpPost);
-        HttpEntity responseEntity = httpResponse.getEntity();
-        if (responseEntity != null) {
-            response = EntityUtils.toString(responseEntity);
-        }
-        client.close();
-        return response;
     }
 
     public String getPatientDocumentTypeUuid(String patinetDocumentType) throws IOException {
@@ -255,7 +225,7 @@ public class OpenMRSService {
         String conceptPanelContent = webClient.get(URI.create(urlPrefix + conceptPanelAPI));
 
         ObjectMapper testsObjectMapper = ObjectMapperRepository.objectMapper;
-        JsonNode conceptPanelJSON  = testsObjectMapper.readTree(conceptPanelContent);
+        JsonNode conceptPanelJSON = testsObjectMapper.readTree(conceptPanelContent);
         JsonNode testsOfPanel = conceptPanelJSON.path("setMembers");
         List<OpenMRSConcept> openMRSConceptsList = new ArrayList<OpenMRSConcept>(testsOfPanel.size());
 

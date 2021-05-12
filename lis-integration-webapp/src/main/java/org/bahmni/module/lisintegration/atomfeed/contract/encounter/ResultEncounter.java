@@ -1,11 +1,12 @@
 package org.bahmni.module.lisintegration.atomfeed.contract.encounter;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.List;
+import org.bahmni.module.lisintegration.services.PostResult;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResultEncounter {
+public class ResultEncounter implements PostResult {
     private String patient;
     private String provider;
     private String visit;
@@ -69,5 +70,10 @@ public class ResultEncounter {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    @Override
+    public String getPostUrl(String urlPrefix) {
+        return urlPrefix + "/openmrs/ws/rest/v1/encounter";
     }
 }

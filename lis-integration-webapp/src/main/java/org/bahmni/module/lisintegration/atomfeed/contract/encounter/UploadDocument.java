@@ -1,6 +1,8 @@
 package org.bahmni.module.lisintegration.atomfeed.contract.encounter;
 
-public class UploadDocument {
+import org.bahmni.module.lisintegration.services.PostResult;
+
+public class UploadDocument implements PostResult {
     private String content;
     private String format;
     private String patientUuid;
@@ -45,5 +47,10 @@ public class UploadDocument {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    @Override
+    public String getPostUrl(String urlPrefix) {
+        return urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument/uploadDocument";
     }
 }

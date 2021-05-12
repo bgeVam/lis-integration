@@ -83,12 +83,12 @@ public class ORUHandler implements ReceivingApplication {
             fillObservation(openMRSEncounter, openMRSOrder);
             ResultEncounter result = new ResultMapper().map(openMRSEncounter);
 
-            openMRSService.postResultEncounter(result);
+            openMRSService.postResult(result);
 
             // Fetching patient document
             UploadDocument uploadDocument = generateUploadDocument(openMRSEncounter, formatFilePDF);
 
-            String urlUploadDocument = openMRSService.urlUploadDocument(uploadDocument);
+            String urlUploadDocument = openMRSService.postResult(uploadDocument);
             JsonNode urlJSON = objectMapper.readTree(urlUploadDocument);
             String image = urlJSON.path("url").getTextValue();
 
@@ -96,7 +96,7 @@ public class ORUHandler implements ReceivingApplication {
             VisitDocument visitDocument = generateVisitDocument(openMRSEncounter, encounterJSONNode, image,
                     patientDocumentTypeUUID, encounterPatientDocumentUUID);
 
-            openMRSService.postVisitDocument(visitDocument);
+            openMRSService.postResult(visitDocument);
 
             return message.generateACK();
         } catch (Throwable t) {
