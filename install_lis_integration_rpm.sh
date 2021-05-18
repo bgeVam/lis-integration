@@ -15,7 +15,7 @@ do
         sudo docker exec $CONTAINER /bin/bash -c "yum install -y /home/lis-integration-0.93-1.noarch.rpm"
         sudo docker exec $CONTAINER /bin/bash -c "systemctl restart lis-integration"
         sudo docker cp update_lis_integration_db.sh $CONTAINER:/home
-        sudo docker exec matr-lis-integration_deploy /bin/bash -c "/home/update_lis_integration_db.sh"
+        sudo docker exec $CONTAINER /bin/bash -c "./home/update_lis_integration_db.sh"
         exit 0
     else
         echo "The postgres service is not running! Test query failed. Retrying..."
