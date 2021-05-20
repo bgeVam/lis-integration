@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# exit when any command fails
+set -e
+
 echo "Removing lis integration from m2 repository."
 rm -rf ~/.m2/repository/org/bahmni/module/lisintegration
 rm -rf ~/.m2/repository/org.ict4h
