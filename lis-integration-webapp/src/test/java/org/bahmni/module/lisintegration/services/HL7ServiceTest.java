@@ -76,7 +76,7 @@ public class HL7ServiceTest {
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
         Order previousOrder = new Order(111, null, "someOrderUuid", "someTestName", "someTestPanel", "someTestUuid",
-                null, "ORD-111", "Comment");
+                null, "ORD-111", "Comment", "someOrderFillerUuid");
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222")
                 .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest"))
                 .withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
@@ -90,8 +90,9 @@ public class HL7ServiceTest {
 
         Assert.assertNotNull(hl7Message);
         assertEquals("CA", hl7Message.getORDER().getORC().getOrderControl().getValue());
-        assertEquals("ORD-111", hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
         assertEquals("someOrderUuid",
+                hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
+        assertEquals("someOrderFillerUuid",
                 hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
     }
 

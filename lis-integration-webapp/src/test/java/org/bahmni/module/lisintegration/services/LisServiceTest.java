@@ -6,6 +6,7 @@ import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ORR_O02;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.exception.LisException;
 import org.bahmni.module.lisintegration.model.Lis;
 import org.bahmni.module.lisintegration.model.OrderType;
@@ -40,6 +41,7 @@ public class LisServiceTest {
     private ORR_O02 orderResponse;
     private String orderTypeName;
     private OrderType orderType;
+    private OpenMRSOrder openMRSOrder;
 
     @Before
     public void setup() {
@@ -47,6 +49,7 @@ public class LisServiceTest {
         orderType = new OrderType();
         orderType.setLis(new Lis());
         orderResponse = new ORR_O02();
+        openMRSOrder = new OpenMRSOrder();
     }
 
     @Test
@@ -57,7 +60,7 @@ public class LisServiceTest {
         doReturn("orderResponseString").when(lisService).parseResponse(orderResponse);
 
         try {
-            String responseString = lisService.sendMessage(requestMessage, orderTypeName);
+            String responseString = lisService.sendMessage(requestMessage, orderTypeName, openMRSOrder);
             assertEquals("orderResponseString", responseString);
         } catch (Exception e) {
             Assert.fail("Should not throw exception");
@@ -73,7 +76,7 @@ public class LisServiceTest {
         doReturn("orderResponseString").when(lisService).parseResponse(ack);
 
         try {
-            String responseString = lisService.sendMessage(requestMessage, orderTypeName);
+            String responseString = lisService.sendMessage(requestMessage, orderTypeName, openMRSOrder);
             assertEquals("orderResponseString", responseString);
         } catch (Exception e) {
             Assert.fail("Should not throw exception");
@@ -87,7 +90,7 @@ public class LisServiceTest {
         doReturn(orderResponse).when(lisService).post(orderType.getLis(), requestMessage);
         doReturn("Failure").when(lisService).parseResponse(orderResponse);
 
-        lisService.sendMessage(requestMessage, orderTypeName);
+        lisService.sendMessage(requestMessage, orderTypeName, openMRSOrder);
     }
 
 }
