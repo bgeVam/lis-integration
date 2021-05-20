@@ -19,6 +19,7 @@ public class OpenMRSOrder {
     private String orderNumber;
     private String previousOrderUuid;
     private String commentToFulfiller;
+    private String fillerOrderUuid;
     private String urgency;
     private Date dateCreated;
     private OpenMRSPatient patient;
@@ -52,13 +53,15 @@ public class OpenMRSOrder {
 
     public OpenMRSOrder(final String uuid, final String orderType, final OpenMRSConcept concept, final Boolean voided,
             final String action,
-            final String previousOrderUuid) {
+            final String previousOrderUuid,
+            final String fillerOrderUuid) {
         this.uuid = uuid;
         this.orderType = orderType;
         this.voided = voided;
         this.concept = concept;
         this.action = action != null ? action : ACTION_NEW;
         this.previousOrderUuid = previousOrderUuid;
+        this.fillerOrderUuid = fillerOrderUuid;
     }
 
     public String getUuid() {
@@ -175,5 +178,13 @@ public class OpenMRSOrder {
 
     public void setEncounter(OpenMRSEncounter encounter) {
         this.encounter = encounter;
+    }
+
+    public String getFillerOrderUuid() {
+        return fillerOrderUuid;
+    }
+
+    public void setFillerOrderUuid(String fillerOrderUuid) {
+        this.fillerOrderUuid = fillerOrderUuid;
     }
 }

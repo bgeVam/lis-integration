@@ -82,7 +82,7 @@ public class LisIntegrationService {
                 Sample sample = openMRSService.getSample(openMRSConcept.getUuid());
                 AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient,
                         openMRSEncounter.getProviders());
-                String response = lisService.sendMessage(request, openMRSOrder.getOrderType());
+                String response = lisService.sendMessage(request, openMRSOrder.getOrderType(), openMRSOrder);
                 Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample,
                         acceptableOrderTypes);
 

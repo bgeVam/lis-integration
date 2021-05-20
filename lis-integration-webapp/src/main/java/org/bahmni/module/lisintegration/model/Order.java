@@ -52,9 +52,12 @@ public class Order extends BaseModel {
     @Column(name = "sample")
     private String sample;
 
+    @Column(name = "filler_order_uuid")
+    private String fillerOrderUuid;
+
     public Order(final int id, final OrderType orderType, final String orderUuid, final String testName,
             final String testPanel, final String testUuid,
-            final String result, final String orderNumber, final String comment) {
+            final String result, final String orderNumber, final String comment, final String fillerOrderUuid) {
         this.id = id;
         this.orderType = orderType;
         this.orderUuid = orderUuid;
@@ -64,6 +67,7 @@ public class Order extends BaseModel {
         this.result = result;
         this.orderNumber = orderNumber;
         this.comment = comment;
+        this.fillerOrderUuid = fillerOrderUuid;
     }
 
     public Order() {
@@ -175,5 +179,13 @@ public class Order extends BaseModel {
 
     public void setSample(String sample) {
         this.sample = sample;
+    }
+
+    public String getFillerOrderUuid() {
+        return fillerOrderUuid;
+    }
+
+    public void setFillerOrderUuid(String fillerOrderUuid) {
+        this.fillerOrderUuid = fillerOrderUuid;
     }
 }

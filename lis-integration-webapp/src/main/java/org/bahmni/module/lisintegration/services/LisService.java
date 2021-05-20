@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.bahmni.module.lisintegration.exception.LisException;
 import org.bahmni.module.lisintegration.model.Lis;
 import org.bahmni.module.lisintegration.repository.OrderTypeRepository;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,19 @@ public class LisService {
     @Autowired
     private SharedHapiContext sharedHapiContext;
 
-    public String sendMessage(AbstractMessage message, String orderType)
+    /**
+     * Send a message with sendMessage by the placed order
+     *
+     * @param message indicated the hl7 message generated after the order is placed
+     * @param orderType represents the type of the order
+     * @param openMRSOrder is the object of {@link OpenMRSOrder)
+     * @return responseMessage returns the message which is parsed by parseResponse
+     * @throws HL7Exception if the message cannot be posted via {@link #post(Lis, Message)} method
+     * @throws HL7Exception if the message cannot be parsed by {@link #parseResponse(Message)} method
+     * @throws LLPException if the message cannot be posted via {@link #post(Lis, Message)} method
+     * @throws IOException if the message cannot be posted via {@link #post(Lis, Message)} method
+     */
+    public String sendMessage(AbstractMessage message, String orderType, OpenMRSOrder openMRSOrder)
             throws HL7Exception, LLPException, IOException {
         Lis lis = orderTypeRepository.getByName(orderType).getLis();
         Message response = post(lis, message);
@@ -62,6 +75,9 @@ public class LisService {
             ORR_O02 acknowledgement = (ORR_O02) response;
             String acknowledgmentCode = acknowledgement.getMSA().getAcknowledgmentCode().getValue();
             processAcknowledgement(lis, responseMessage, acknowledgmentCode);
+            String fillerOrderUuid = acknowledgement.getRESPONSE().getORDER().getORC().getFillerOrderNumber()
+                    .getEntityIdentifier().toString();
+            openMRSOrder.setFillerOrderUuid(fillerOrderUuid);
         } else if (response instanceof ACK) {
             ACK acknowledgement = (ACK) response;
             String acknowledgmentCode = acknowledgement.getMSA().getAcknowledgmentCode().getValue();

@@ -65,6 +65,7 @@ public class LisIntegrationServiceTest {
     private LisService lisService;
 
     private String PATIENT_UUID = "patient1";
+    private String FILLER_ORDER_UUID = "fillerOrderUuid1";
 
     @Before
     public void setUp() throws Exception {
@@ -112,8 +113,8 @@ public class LisIntegrationServiceTest {
         openMRSEncounter.setPatientUuid(PATIENT_UUID);
         OpenMRSConcept concept = new OpenMRSConcept();
         concept.setUuid("f5774c43-1e4c-46fa-a06a-4e2c684b154c");
-        OpenMRSOrder order1 = new OpenMRSOrder("uuid1", "type1", concept, false, null, null);
-        OpenMRSOrder order2 = new OpenMRSOrder("uuid2", "type2", concept, false, null, null);
+        OpenMRSOrder order1 = new OpenMRSOrder("uuid1", "type1", concept, false, null, null, FILLER_ORDER_UUID);
+        OpenMRSOrder order2 = new OpenMRSOrder("uuid2", "type2", concept, false, null, null, FILLER_ORDER_UUID);
         openMRSEncounter.setOrders(Arrays.asList(order1, order2));
         return openMRSEncounter;
     }

@@ -29,6 +29,7 @@ public class OpenMRSEncounterToOrderMapper {
         order.setCreator(providerName);
         order.setComment(openMRSOrder.getCommentToFulfiller());
         order.setSample(sample.getName());
+        order.setFillerOrderUuid(openMRSOrder.getFillerOrderUuid());
         return order;
     }
 
