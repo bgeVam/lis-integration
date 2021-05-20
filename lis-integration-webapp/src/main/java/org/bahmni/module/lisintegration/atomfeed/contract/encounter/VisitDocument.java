@@ -1,7 +1,9 @@
 package org.bahmni.module.lisintegration.atomfeed.contract.encounter;
 import java.util.List;
 
-public class VisitDocument {
+import org.bahmni.module.lisintegration.services.PostResult;
+
+public class VisitDocument implements PostResult {
     private String patientUuid;
     private String visitTypeUuid;
     private String visitStartDate;
@@ -82,5 +84,10 @@ public class VisitDocument {
 
     public void setLocationUuid(String locationUuid) {
         this.locationUuid = locationUuid;
+    }
+
+    @Override
+    public String getPostUrl(String urlPrefix) {
+        return urlPrefix + "/openmrs/ws/rest/v1/bahmnicore/visitDocument";
     }
 }
