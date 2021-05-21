@@ -172,7 +172,6 @@ public class HL7Service {
      * @throws DataTypeException used to handle exceptions related with presented data
      */
     private void addPatientDetails(ORM_O01 message, OpenMRSPatient openMRSPatient) throws DataTypeException {
-        // handle the patient PID component
         ORM_O01_PATIENT patient = message.getPATIENT();
         PID pid = patient.getPID();
         pid.getPatientIdentifierList(0).getIDNumber().setValue(openMRSPatient.getPatientId());
@@ -182,10 +181,12 @@ public class HL7Service {
         pid.getPatientName(0).getFamilyName().getSurname().setValue(openMRSPatient.getFamilyName());
         pid.getDateTimeOfBirth().getTime().setValue(openMRSPatient.getBirthDate());
         pid.getAdministrativeSex().setValue(openMRSPatient.getGender());
+        pid.getPatientAddress(0).getCity().setValue(openMRSPatient.getCity());
+        pid.getPatientAddress(0).getCountry().setValue(openMRSPatient.getState());
+        pid.getPatientAddress(0).getStateOrProvince().setValue(openMRSPatient.getDistrict());
 
         message.getORDER().getORDER_DETAIL().getOBR().getPlannedPatientTransportComment(0).getText()
                 .setValue(openMRSPatient.getGivenName() + "," + openMRSPatient.getFamilyName());
-
     }
 
     private static DateFormat getHl7DateFormat() {

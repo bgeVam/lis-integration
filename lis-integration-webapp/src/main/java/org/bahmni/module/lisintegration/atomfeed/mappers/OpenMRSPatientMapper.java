@@ -39,6 +39,9 @@ public class OpenMRSPatientMapper {
                 .replaceAll("[\\W&&[^-]]", " "));
         patient.setGender(jsonNode.path("person").path("gender").asText());
         patient.setBirthDate(dateOfBirthFormat.parse(jsonNode.path("person").path("birthdate").asText()));
+        patient.setCity(jsonNode.path("person").path("preferredAddress").path("countyDistrict").asText());
+        patient.setState(jsonNode.path("person").path("preferredAddress").path("country").asText());
+        patient.setDistrict(jsonNode.path("person").path("preferredAddress").path("stateProvince").asText());
         for (JsonNode identifier : identifierList) {
             String identifierType = identifier.path("identifierType").path("display").asText();
             if (identifierType.equals("Social Security Number")) {
@@ -47,8 +50,6 @@ public class OpenMRSPatientMapper {
                 patient.setDrivingLicenseNumber(identifier.path("identifier").asText());
             }
         }
-
         return patient;
     }
-
 }
