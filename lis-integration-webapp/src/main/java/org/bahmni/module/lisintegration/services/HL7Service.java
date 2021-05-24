@@ -143,11 +143,20 @@ public class HL7Service {
         orc.getCallBackPhoneNumber(0).getEmailAddress().setValue(email);
     }
 
+    /**
+     * adds the details of the Patient to the HL7 message
+     *
+     * @param message represents the ORM message
+     * @param openMRSPatient represents the patient which is linked to these details
+     * @throws DataTypeException used to handle exceptions related with presented data
+     */
     private void addPatientDetails(ORM_O01 message, OpenMRSPatient openMRSPatient) throws DataTypeException {
         // handle the patient PID component
         ORM_O01_PATIENT patient = message.getPATIENT();
         PID pid = patient.getPID();
         pid.getPatientIdentifierList(0).getIDNumber().setValue(openMRSPatient.getPatientId());
+        pid.getDriverSLicenseNumberPatient().getLicenseNumber().setValue(openMRSPatient.getDrivingLicenseNumber());
+        pid.getSSNNumberPatient().setValue(openMRSPatient.getSSNNumber());
         pid.getPatientName(0).getGivenName().setValue(openMRSPatient.getGivenName());
         pid.getPatientName(0).getFamilyName().getSurname().setValue(openMRSPatient.getFamilyName());
         pid.getDateTimeOfBirth().getTime().setValue(openMRSPatient.getBirthDate());

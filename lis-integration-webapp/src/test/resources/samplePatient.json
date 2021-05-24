@@ -30,6 +30,32 @@
         }
       ],
       "resourceVersion": "1.8"
+    },
+    {
+       "display":"Driving License = TestDrivingLicence",
+       "identifier":"TestDrivingLicence",
+       "identifierType":{
+          "display":"Driving License",
+          "links":[
+             {
+                "uri": "NEED-TO-CONFIGURE/ws/rest/v1/patientidentifiertype/81433852-3f10-11e4-adec-0800271c1b75",
+                "rel": "self"
+             }
+          ]
+       }
+    },
+    {
+       "display":"Social Security Number = TestSSNNumber",
+       "identifier":"TestSSNNumber",
+       "identifierType":{
+          "display":"Social Security Number",
+          "links":[
+             {
+                "uri": "NEED-TO-CONFIGURE/ws/rest/v1/patientidentifiertype/81433852-3f10-11e4-adec-0800271c1b75",
+                "rel": "self"
+             }
+          ]
+       }
     }
   ],
   "person": {

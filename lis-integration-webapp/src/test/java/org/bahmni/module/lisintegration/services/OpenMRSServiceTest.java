@@ -64,6 +64,8 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         when(WebClientFactory.getClient()).thenReturn(webClient);
         String patientUuid = "105059a8-5226-4b1f-b512-0d3ae685287d";
         String identifier = "GAN200053";
+        String drivingLicenseNumber = "TestDrivingLicence";
+        String ssnNumber = "TestSSNNumber";
         when(webClient.get(new URI("http://localhost:8050/openmrs/ws/rest/v1/patient/" + patientUuid+"?v=full"))).thenReturn(new OpenMRSMapperBaseTest().deserialize("/samplePatient.json"));
 
         when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
@@ -71,6 +73,8 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         OpenMRSPatient patient = new OpenMRSService().getPatient(patientUuid);
 
         assertEquals(identifier, patient.getPatientId());
+        assertEquals(drivingLicenseNumber, patient.getDrivingLicenseNumber());
+        assertEquals(ssnNumber, patient.getSSNNumber());
 
     }
 

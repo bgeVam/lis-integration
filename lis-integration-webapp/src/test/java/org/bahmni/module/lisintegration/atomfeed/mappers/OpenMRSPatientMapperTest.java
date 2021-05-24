@@ -13,6 +13,8 @@ public class OpenMRSPatientMapperTest extends OpenMRSMapperBaseTest {
         OpenMRSPatient patient = new OpenMRSPatientMapper().map(json);
 
         Assert.assertEquals("GAN200053", patient.getPatientId());
+        Assert.assertEquals("TestDrivingLicence", patient.getDrivingLicenseNumber());
+        Assert.assertEquals("TestSSNNumber", patient.getSSNNumber());
         Assert.assertEquals(" T e s t N o O p e_n-V i s i t ", patient.getGivenName());
         Assert.assertEquals("S c e n a r i o 9", patient.getFamilyName());
         Assert.assertEquals("F", patient.getGender());
