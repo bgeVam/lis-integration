@@ -48,6 +48,16 @@ public class HL7Service {
         }
     }
 
+    /**
+     * creates the order message
+     *
+     * @param order          is the object of {@link OpenMRSOrder)
+     * @param sample         is the object of {@link Sample)
+     * @param openMRSPatient is the object of {@link OpenMRSPatient)
+     * @param providers      represents the list of the providers
+     * @return message returns the message which is created by this method
+     * @throws DataTypeException if there is a problem with the data type
+     */
     private AbstractMessage createOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
             List<OpenMRSProvider> providers) throws DataTypeException {
         ORM_O01 message = new ORM_O01();
@@ -58,13 +68,13 @@ public class HL7Service {
         // handle ORC component
         ORC orc = message.getORDER().getORC();
         String orderNumber = order.getOrderNumber();
-        String orderUUID = order.getUuid();
+        String placerOrderUuid = order.getUuid();
         if (isSizeExceedingLimit(orderNumber)) {
             throw new HL7MessageException(
                     "Unable to create HL7 message. Order Number size exceeds limit " + orderNumber);
         }
         orc.getQuantityTiming(0).getPriority().setValue(order.getUrgency());
-        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderUUID);
+        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(placerOrderUuid);
         orc.getFillerOrderNumber().getEntityIdentifier().setValue("");
         orc.getEnteredBy(0).getGivenName().setValue(sender);
         orc.getOrderControl().setValue(newOrder);
@@ -77,9 +87,20 @@ public class HL7Service {
         return orderNumber.getBytes().length > 16;
     }
 
+    /**
+     * processes the message of a canceled order message
+     *
+     * @param order          is the object of {@link OpenMRSOrder)
+     * @param sample         is the object of {@link Sample)
+     * @param openMRSPatient is the object of {@link OpenMRSPatient)
+     * @param providers      represents the list of the providers
+     * @return message returns the message which is created by this method after
+     *         being canceled
+     * @throws DataTypeException if there is a problem with the data type
+     */
     private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
             List<OpenMRSProvider> providers) throws DataTypeException {
-        Order previousOrder = orderRepository.findByOrderUuid(order.getPreviousOrderUuid());
+        Order previousOrder = orderRepository.findByPlacerOrderUuid(order.getPreviousOrderUuid());
         if (previousOrder == null) {
             throw new HL7MessageException(
                     "Unable to Cancel the Order. Previous order is not found" + order.getOrderNumber());
@@ -92,13 +113,13 @@ public class HL7Service {
         // handle ORC component
         ORC orc = message.getORDER().getORC();
         String orderNumber = previousOrder.getOrderNumber();
-        String orderUUID = previousOrder.getOrderUuid();
+        String placerOrderUuid = previousOrder.getPlacerOrderUuid();
         String fillerOrderUuid = previousOrder.getFillerOrderUuid();
         if (isSizeExceedingLimit(order.getOrderNumber())) {
             throw new HL7MessageException(
                     "Unable to create HL7 message. Order Number size exceeds limit" + orderNumber);
         }
-        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(orderUUID);
+        orc.getPlacerOrderNumber().getEntityIdentifier().setValue(placerOrderUuid);
         orc.getFillerOrderNumber().getEntityIdentifier().setValue(fillerOrderUuid);
         orc.getEnteredBy(0).getGivenName().setValue(sender);
         orc.getOrderControl().setValue(cancelOrder);

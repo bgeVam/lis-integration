@@ -33,12 +33,12 @@ public class OpenMRSEncounterToOrderMapperTest {
         String testPanelName = "LabTest";
         String orderNumber = "ORD-001";
         String testUuid = "concept uuid";
-        String orderUuid = "lab order uuid";
+        String placerOrderUuid = "lab order uuid";
         String providerName = "Albion Shala";
         String sampleName = "Blood";
         OpenMRSConceptName conceptName = new OpenMRSConceptNameBuilder().withName(testName).build();
         OpenMRSConcept concept = new OpenMRSConceptBuilder().withUuid(testUuid).withName(conceptName).addConceptClass(testPanelName).build();
-        OpenMRSOrder labOrder = new OpenMRSOrderBuilder().withOrderUuid(orderUuid).withOrderType("Lab Order").withOrderNumber(orderNumber).withVoided(false).withConcept(concept).build();
+        OpenMRSOrder labOrder = new OpenMRSOrderBuilder().withOrderUuid(placerOrderUuid).withOrderType("Lab Order").withOrderNumber(orderNumber).withVoided(false).withConcept(concept).build();
         OpenMRSOrder radiologyOrder = new OpenMRSOrderBuilder().withOrderUuid("radiology order uuid").withOrderType("Radiology Order").withVoided(false).withConcept(concept).build();
         OpenMRSProvider openMRSProvider = new OpenMRSProvider("provider-uuid", providerName);
         OpenMRSEncounter openMRSEncounter = new OpenMRSEncounterBuilder().withEncounterUuid("encounter uuid").withPatientUuid("patient uuid")
@@ -48,13 +48,13 @@ public class OpenMRSEncounterToOrderMapperTest {
         ArrayList<OrderType> acceptableOrderTypes = new ArrayList<OrderType>();
         acceptableOrderTypes.add(new OrderTypeBuilder().withName("Lab Order").build());
 
-        when(orderRepository.findByOrderUuid(orderUuid)).thenReturn(null);
+        when(orderRepository.findByPlacerOrderUuid(placerOrderUuid)).thenReturn(null);
 
         Order order = openMRSEncounterToOrderMapper.map(labOrder, openMRSEncounter, sample, acceptableOrderTypes);
 
         assertNotNull(order);
         assertEquals(orderNumber, order.getOrderNumber());
-        assertEquals(orderUuid, order.getOrderUuid());
+        assertEquals(placerOrderUuid, order.getPlacerOrderUuid());
         assertEquals(testName, order.getTestName());
         assertEquals(testUuid, order.getTestUuid());
         assertEquals(providerName, order.getCreator());

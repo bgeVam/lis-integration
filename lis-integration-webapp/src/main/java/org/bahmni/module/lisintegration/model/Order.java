@@ -16,8 +16,8 @@ public class Order extends BaseModel {
     @JoinColumn(name = "order_type_id", nullable = false)
     private OrderType orderType;
 
-    @Column(name = "order_uuid", unique = true, nullable = false)
-    private String orderUuid;
+    @Column(name = "placer_order_uuid", unique = true, nullable = false)
+    private String placerOrderUuid;
 
     @Column(name = "test_name", nullable = false)
     private String testName;
@@ -55,12 +55,12 @@ public class Order extends BaseModel {
     @Column(name = "filler_order_uuid")
     private String fillerOrderUuid;
 
-    public Order(final int id, final OrderType orderType, final String orderUuid, final String testName,
-            final String testPanel, final String testUuid,
-            final String result, final String orderNumber, final String comment, final String fillerOrderUuid) {
+    public Order(final int id, final OrderType orderType, final String placerOrderUuid, final String testName,
+            final String testPanel, final String testUuid, final String result, final String orderNumber,
+            final String comment, final String fillerOrderUuid) {
         this.id = id;
         this.orderType = orderType;
-        this.orderUuid = orderUuid;
+        this.placerOrderUuid = placerOrderUuid;
         this.testName = testName;
         this.testPanel = testPanel;
         this.testUuid = testUuid;
@@ -97,12 +97,22 @@ public class Order extends BaseModel {
         this.orderType = orderType;
     }
 
-    public String getOrderUuid() {
-        return orderUuid;
+    /**
+     * gets the placer or Bahmni uuid of the order
+     *
+     * @return placerOrderUuid returns the Bahmni uuid
+     */
+    public String getPlacerOrderUuid() {
+        return placerOrderUuid;
     }
 
-    public void setOrderUuid(String orderUuid) {
-        this.orderUuid = orderUuid;
+    /**
+     * sets the placer or Bahmni uuid of the order
+     *
+     * @param placerOrderUuid represents the uuid of the placer
+     */
+    public void setPlacerOrderUuid(String placerOrderUuid) {
+        this.placerOrderUuid = placerOrderUuid;
     }
 
     public String getTestName() {

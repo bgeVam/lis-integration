@@ -204,4 +204,7 @@
             <column name="filler_order_uuid" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="LIS-202105251200" author="Shala, Albion">
+        <renameColumn newColumnName="placer_order_uuid" oldColumnName="order_uuid" tableName="test_order"/>
+    </changeSet>
 </databaseChangeLog>

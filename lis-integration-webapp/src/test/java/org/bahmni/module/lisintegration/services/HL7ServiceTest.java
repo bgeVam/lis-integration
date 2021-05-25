@@ -75,22 +75,22 @@ public class HL7ServiceTest {
     @Test
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
-        Order previousOrder = new Order(111, null, "someOrderUuid", "someTestName", "someTestPanel", "someTestUuid",
+        Order previousOrder = new Order(111, null, "somePlacerOrderUuid", "someTestName", "someTestPanel", "someTestUuid",
                 null, "ORD-111", "Comment", "someOrderFillerUuid");
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222")
                 .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest"))
-                .withPreviousOrderUuid(previousOrder.getOrderUuid()).withDiscontinued().build();
+                .withPreviousOrderUuid(previousOrder.getPlacerOrderUuid()).withDiscontinued().build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
         List<OpenMRSProvider> providers = getProvidersData();
-        when(orderRepository.findByOrderUuid(order.getPreviousOrderUuid())).thenReturn(previousOrder);
+        when(orderRepository.findByPlacerOrderUuid(order.getPreviousOrderUuid())).thenReturn(previousOrder);
 
         HL7Service hl7Service = new HL7Service(orderRepository);
         ORM_O01 hl7Message = (ORM_O01) hl7Service.createMessage(order, sample, patient, providers);
 
         Assert.assertNotNull(hl7Message);
         assertEquals("CA", hl7Message.getORDER().getORC().getOrderControl().getValue());
-        assertEquals("someOrderUuid",
+        assertEquals("somePlacerOrderUuid",
                 hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
         assertEquals("someOrderFillerUuid",
                 hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
