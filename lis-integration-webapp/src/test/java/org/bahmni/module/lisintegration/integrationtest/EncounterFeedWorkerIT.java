@@ -63,7 +63,7 @@ public class EncounterFeedWorkerIT extends BaseIntegrationTest {
 
         List<Order> savedOrders = orderRepository.findAll();
         assertEquals(1, savedOrders.size());
-        assertEquals("08d2dfa2-2274-44a1-a29e-30ea02df2798", savedOrders.get(0).getOrderUuid());
+        assertEquals("08d2dfa2-2274-44a1-a29e-30ea02df2798", savedOrders.get(0).getPlacerOrderUuid());
         assertEquals("HEAD Skull AP", savedOrders.get(0).getTestName());
         assertEquals("c42e71d7-3f10-11e4-adec-0800271c1b75", savedOrders.get(0).getTestUuid());
 

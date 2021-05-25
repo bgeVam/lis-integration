@@ -77,7 +77,7 @@ public class LisIntegrationServiceTest {
         OpenMRSEncounter encounter = buildEncounter();
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
-        when(orderRepository.findByOrderUuid(any(String.class))).thenReturn(null);
+        when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null);
         when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class),
                 any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
@@ -95,7 +95,7 @@ public class LisIntegrationServiceTest {
         OpenMRSEncounter encounter = buildEncounter();
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
-        when(orderRepository.findByOrderUuid(any(String.class))).thenReturn(null).thenReturn(new Order());
+        when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null).thenReturn(new Order());
         when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class),
                 any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");

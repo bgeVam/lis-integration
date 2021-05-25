@@ -11,12 +11,22 @@ import java.util.List;
 
 @Component
 public class OpenMRSEncounterToOrderMapper {
+
+    /**
+     * maps the encounter to order
+     *
+     * @param openMRSOrder     is the object of {@link OpenMRSOrder)
+     * @param openMRSEncounter is the object of {@link openMRSEncounter)
+     * @param sample           is the object of {@link Sample)
+     * @param orderTypes       represents the list of types of the order
+     * @return order returns the mapped order with the details added accordingly
+     */
     public Order map(OpenMRSOrder openMRSOrder, OpenMRSEncounter openMRSEncounter, Sample sample,
             List<OrderType> orderTypes) {
         String providerName = getProviderName(openMRSEncounter);
         Order order = new Order();
         order.setOrderNumber(openMRSOrder.getOrderNumber());
-        order.setOrderUuid(openMRSOrder.getUuid());
+        order.setPlacerOrderUuid(openMRSOrder.getUuid());
         if ("LabTest".equals(openMRSOrder.getConcept().getConceptClass())) {
             order.setTestName(openMRSOrder.getConcept().getName().getName());
         }

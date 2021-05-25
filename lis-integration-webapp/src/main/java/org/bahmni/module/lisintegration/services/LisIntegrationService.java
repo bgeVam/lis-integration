@@ -69,6 +69,27 @@ public class LisIntegrationService {
         }
     }
 
+    /**
+     * processes the encounter
+     *
+     * @param openMRSEncounter is the object of {@link openMRSEncounter)
+     * @throws IOException    if the patient cannot be fetched via
+     *                        {@link #getPatient(patientUuid)} method
+     * @throws IOException    if the sample cannot be fetched via
+     *                        {@link #getSample(conceptUuid)} method
+     * @throws IOException    if the message cannot be posted via
+     *                        {@link #sendMessage(message, orderType, openMRSOrder)}
+     *                        method
+     * @throws ParseException if the patient cannot be fetched via
+     *                        {@link #getPatient(patientUuid)} method
+     * @throws HL7Exception   if the message cannot be created via
+     *                        {@link #createMessage(openMRSOrder, sample, openMRSPatient, providers)}
+     *                        method
+     * @throws HL7Exception   if the message cannot be sent via
+     *                        {@link #sendMessage(message, orderType, openMRSOrder)} method
+     * @throws LLPException   if the message cannot be sent via
+     *                        {@link #sendMessage(message, orderType, openMRSOrder)} method
+     */
     public void processEncounter(OpenMRSEncounter openMRSEncounter)
             throws IOException, ParseException, HL7Exception, LLPException {
         OpenMRSPatient patient = openMRSService.getPatient(openMRSEncounter.getPatientUuid());
@@ -77,7 +98,7 @@ public class LisIntegrationService {
         List<OpenMRSOrder> newAcceptableTestOrders = openMRSEncounter.getAcceptableTestOrders(acceptableOrderTypes);
         Collections.reverse(newAcceptableTestOrders);
         for (OpenMRSOrder openMRSOrder : newAcceptableTestOrders) {
-            if (orderRepository.findByOrderUuid(openMRSOrder.getUuid()) == null) {
+            if (orderRepository.findByPlacerOrderUuid(openMRSOrder.getUuid()) == null) {
                 OpenMRSConcept openMRSConcept = openMRSOrder.getConcept();
                 Sample sample = openMRSService.getSample(openMRSConcept.getUuid());
                 AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient,
