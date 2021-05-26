@@ -31,7 +31,7 @@ public class HL7ORUtoOpenMRSEncounterMapperTest extends OpenMRSMapperBaseTest {
 
         HL7ORUtoOpenMRSEncounterMapper hl7 = new HL7ORUtoOpenMRSEncounterMapper();
         OpenMRSEncounter openMRSEncounter = hl7.map(oru);
-        Assert.assertEquals("6b519258-c97b-4c6b-891b-e6f478123cbb", openMRSEncounter.getOrders().get(0).getUuid());
+        Assert.assertEquals("ORD-123", openMRSEncounter.getOrders().get(0).getUuid());
         Assert.assertEquals((Double) 55.0, openMRSEncounter.getObs().get(0).getGroupMembers().get(0).getValue());
         Assert.assertEquals("Absolute Eosinphil Count",
                 openMRSEncounter.getObs().get(0).getConcept().getName().getName());
@@ -59,7 +59,7 @@ public class HL7ORUtoOpenMRSEncounterMapperTest extends OpenMRSMapperBaseTest {
 
         HL7ORUtoOpenMRSEncounterMapper hl7 = new HL7ORUtoOpenMRSEncounterMapper();
         OpenMRSEncounter openMRSEncounter = hl7.map(oru);
-        Assert.assertEquals("b4ee913c-5262-4d63-ba68-c1a66f8a2bae", openMRSEncounter.getOrders().get(0).getUuid());
+        Assert.assertEquals("ORD-310", openMRSEncounter.getOrders().get(0).getUuid());
         Assert.assertEquals("2021-04-12T13:57:05.000+0200", openMRSEncounter.getObs().get(0).getObsDateTime());
         Assert.assertEquals((Double) 33.0, openMRSEncounter.getObs().get(0).getGroupMembers().get(0).getValue());
         Assert.assertEquals("Leukocytes",
