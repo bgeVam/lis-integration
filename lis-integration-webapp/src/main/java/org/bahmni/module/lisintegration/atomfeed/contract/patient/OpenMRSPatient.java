@@ -9,6 +9,8 @@ public class OpenMRSPatient {
     private String familyName;
     private Date birthDate;
     private String patientUUID;
+    private String drivingLicenseNumber;
+    private String ssnNumber;
 
     public String getGender() {
         return gender;
@@ -66,5 +68,21 @@ public class OpenMRSPatient {
 
     public void setPatientUUID(String patientUUID) {
         this.patientUUID = patientUUID;
+    }
+
+    public String getDrivingLicenseNumber() {
+        return drivingLicenseNumber;
+    }
+
+    public void setDrivingLicenseNumber(String drivingLicenseNumber) {
+        this.drivingLicenseNumber = drivingLicenseNumber;
+    }
+
+    public String getSSNNumber() {
+        return ssnNumber;
+    }
+
+    public void setSSNNumber(String ssnNumber) {
+        this.ssnNumber = ssnNumber;
     }
 }
