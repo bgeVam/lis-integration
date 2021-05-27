@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.*;
 import org.powermock.core.classloader.annotations.*;
 import org.powermock.modules.junit4.*;
-
 import java.net.*;
 import java.util.List;
 

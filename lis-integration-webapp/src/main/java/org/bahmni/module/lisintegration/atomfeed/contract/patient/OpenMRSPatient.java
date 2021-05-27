@@ -11,6 +11,34 @@ public class OpenMRSPatient {
     private String patientUUID;
     private String drivingLicenseNumber;
     private String ssnNumber;
+    private String gender;
+    private String district;
+    private String state;
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 
     public String getGender() {
         return gender;
@@ -59,8 +87,6 @@ public class OpenMRSPatient {
     public void setPatientId(String patientId) {
         this.patientId = patientId;
     }
-
-    private String gender;
 
     public String getPatientUUID() {
         return patientUUID;
