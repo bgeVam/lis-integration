@@ -1,5 +1,8 @@
 #!/bin/sh
-# set -e
+
+# exit when any command fails
+set -e
+
 SCRIPTS_DIR=`dirname $0`
 DATABASE_NAME="bahmni_lis"
 BAHMNI_LIS_DB_SERVER="localhost"

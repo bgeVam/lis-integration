@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit when any command fails
+set -e
+
 # Set default en_US.UTF-8 locale for all profile to ensure database is correct provisioned (LANGUAGE is only for messages, LC_ALL overrides explicitely all other LC variables, but LANG acts as a default - therefore it is chosen).
 echo "Set correct locale."
 export LANGUAGE=en_US.UTF-8
@@ -23,7 +26,7 @@ esac
 
 
 # Setting proxy settings for maven
-mkdir /root/.m2
+mkdir -p /root/.m2
 cat << EOFMAVENSETTINGS > /root/.m2/custom-settings.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
