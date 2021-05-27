@@ -12,8 +12,8 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConce
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSObs;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
-import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Visit;
 import org.bahmni.module.lisintegration.services.OpenMRSService;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class ResultMapperTest extends OpenMRSMapperBaseTest {
         concept.setUuid("uuid-test-uuid-test-concpet");
         OpenMRSOrder order = new OpenMRSOrder();
         order.setUuid("uuid-test-uuid-test-order");
-        Visit visit = new Visit();
+        OpenMRSVisit visit = new OpenMRSVisit();
         visit.setUuid("uuid-test-uuid-test-visit");
 
         OpenMRSObs valueGroupMember = new OpenMRSObs();

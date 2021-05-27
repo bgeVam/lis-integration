@@ -10,7 +10,10 @@ import ca.uhn.hl7v2.model.v25.segment.*;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptMapping;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSPerson;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSRelationship;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.exception.HL7MessageException;
@@ -47,11 +50,11 @@ public class HL7Service {
     private final String email = "root@Example-lis.com";
 
     public AbstractMessage createMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
-            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
+            OpenMRSPatient openMRSPatient, OpenMRSVisit visit, List<OpenMRSProvider> providers) throws HL7Exception {
         if (order.isDiscontinued()) {
-            return cancelOrderMessage(order, sample, openMRSPatient, providers);
+            return cancelOrderMessage(order, sample, openMRSPatient, visit, providers);
         } else {
-            return createOrderMessage(order, diagnosisList, sample, openMRSPatient, providers);
+            return createOrderMessage(order, diagnosisList, sample, openMRSPatient, visit, providers);
         }
     }
 
@@ -67,13 +70,16 @@ public class HL7Service {
      * @throws DataTypeException if there is a problem with the data type
      */
     private AbstractMessage createOrderMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
-            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
+            OpenMRSPatient openMRSPatient, OpenMRSVisit visit, List<OpenMRSProvider> providers) throws HL7Exception {
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
         addProviderDetails(providers, message);
         for (int diagnosis = 0; diagnosis < diagnosisList.size(); diagnosis++) {
             addDiagnosis(message, diagnosisList.get(diagnosis), diagnosis);
+        }
+        if (visit != null) {
+            addVisitDetails(message, visit);
         }
 
         // handle ORC component
@@ -111,7 +117,7 @@ public class HL7Service {
      * @throws DataTypeException if there is a problem with the data type
      */
     private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
-            List<OpenMRSProvider> providers) throws DataTypeException {
+            OpenMRSVisit visit, List<OpenMRSProvider> providers) throws DataTypeException {
         Order previousOrder = orderRepository.findByPlacerOrderUuid(order.getPreviousOrderUuid());
         if (previousOrder == null) {
             throw new HL7MessageException(
@@ -121,6 +127,9 @@ public class HL7Service {
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
         addProviderDetails(providers, message);
+        if (visit != null) {
+            addVisitDetails(message, visit);
+        }
 
         // handle ORC component
         ORC orc = message.getORDER().getORC();
@@ -199,6 +208,32 @@ public class HL7Service {
 
         message.getORDER().getORDER_DETAIL().getOBR().getPlannedPatientTransportComment(0).getText()
                 .setValue(openMRSPatient.getGivenName() + "," + openMRSPatient.getFamilyName());
+    }
+
+    /**
+     * Adds the details of the Visit to the HL7 message.
+     *
+     * @param message represents the ORM message.
+     * @param openMRSVisit represents the visit which is linked to these details.
+     * @throws DataTypeException if the message cannot be set via {@link #setValue(String)} method.
+     * @throws DataTypeException if the message cannot be set via {@link #setValue(Date)} method.
+     */
+    private void addVisitDetails(ORM_O01 message, OpenMRSVisit visit) throws DataTypeException  {
+        // handle the patient PID component
+
+        PV1 pv1 = message.getPATIENT().getPATIENT_VISIT().getPV1();
+        pv1.getVisitNumber().getIDNumber().setValue(visit.getVisitNumber());
+        pv1.getAdmitDateTime().getTime().setValue(visit.getAdmissionDate());
+        pv1.getPatientClass().setValue(visit.getOrder().getCareSetting());
+
+        int countOfDoctors = 0;
+        for (OpenMRSRelationship relationship : visit.getRelationships()) {
+            OpenMRSPerson doctor = relationship.getDoctor();
+            pv1.getAttendingDoctor(countOfDoctors).getIDNumber().setValue(doctor.getPresonUuid());
+            pv1.getAttendingDoctor(countOfDoctors).getFamilyName().getFn1_Surname().setValue(doctor.getFamilyName());
+            pv1.getAttendingDoctor(countOfDoctors).getGivenName().setValue(doctor.getGivenName());
+            countOfDoctors++;
+        }
     }
 
     private static DateFormat getHl7DateFormat() {

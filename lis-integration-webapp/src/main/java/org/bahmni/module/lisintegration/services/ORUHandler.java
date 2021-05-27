@@ -11,9 +11,9 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConce
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
-import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Visit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.VisitDocument;
 import org.bahmni.module.lisintegration.atomfeed.mappers.HL7ORUtoOpenMRSEncounterMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.ResultMapper;
@@ -155,7 +155,7 @@ public class ORUHandler implements ReceivingApplication {
         openMRSEncounter.setPatientUuid(openMRSEncounter.getOrders().get(0).getPatient().getPatientUUID());
         openMRSEncounter.setProviders(Arrays.asList(provider));
 
-        Visit visit = new Visit();
+        OpenMRSVisit visit = new OpenMRSVisit();
         visit.setUuid(encounterJSONNode.path("visit").path("uuid").getTextValue());
         openMRSEncounter.setVisit(visit);
     }
