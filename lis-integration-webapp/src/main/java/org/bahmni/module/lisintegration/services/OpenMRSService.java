@@ -22,6 +22,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.bahmni.module.lisintegration.atomfeed.client.ConnectionDetails;
 import org.bahmni.module.lisintegration.atomfeed.client.WebClientFactory;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
@@ -30,6 +31,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncoun
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
+import org.bahmni.module.lisintegration.atomfeed.mappers.DiagnosisMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPatientMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OrderMapper;
@@ -56,6 +58,9 @@ public class OpenMRSService {
 
     @Value("${default.letters}")
     private String printDefault;
+
+    @Autowired
+    private DiagnosisMapper diagnosisMapper;
 
     public OpenMRSEncounter getEncounter(String encounterUrl) throws IOException {
         HttpClient webClient = WebClientFactory.getClient();
@@ -239,5 +244,58 @@ public class OpenMRSService {
             openMRSConceptsList.add(testConcept);
         }
         return openMRSConceptsList;
+    }
+
+    /**
+     * getDiagnosis is the method which is called for fetching the list of diagnosis of one patient.
+     *
+     * @param encounterUUID used to fetch the encounter data.
+     * @return list of diagnosis fetched by the encounter.
+     * @throws IOException
+     * @throws ParseException
+     */
+    public List<Diagnosis> getDiagnosis(String encounterUUID) throws IOException, ParseException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+
+        String encounterAPI = "/openmrs/ws/rest/v1/encounter/" + encounterUUID + "?v=full";
+        String encounterJSON = webClient.get(URI.create(urlPrefix + encounterAPI));
+
+        return diagnosisMapper.map(encounterJSON);
+    }
+
+     /**
+     * getDiagnosisCode is the method that is called to fetch the code of one diagnosis.
+     *
+     * @param diagnosisUuid used to fetch the diagnosis details
+     * @return code of diagnosis
+     * @throws IOException
+     */
+    public String getDiagnosisCode(String diagnosisUuid) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String diagnosisCodeAPI = "/openmrs/ws/rest/v1/conceptreferenceterm/" + diagnosisUuid + "?v=full";
+
+        String diagnosisReferenceJSON = webClient.get(URI.create(urlPrefix + diagnosisCodeAPI));
+        ObjectMapper diagnosisCodetMapper = ObjectMapperRepository.objectMapper;
+        JsonNode diagnosisCodeJson = diagnosisCodetMapper.readTree(diagnosisReferenceJSON);
+        String code = diagnosisCodeJson.path("code").asText();
+        return code;
+    }
+
+    /**
+     * getConcept is the method which is called to fetch all the data of one concept.
+     *
+     * @param conceptUuid used to fetch the concept details
+     * @return all data of concept
+     * @throws IOException
+     */
+    public String getConcept(String conceptUuid) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String concpetAPI = "/openmrs/ws/rest/v1/concept/" + conceptUuid + "?v=full";
+
+        String concpet = webClient.get(URI.create(urlPrefix + concpetAPI));
+        return concpet;
     }
 }

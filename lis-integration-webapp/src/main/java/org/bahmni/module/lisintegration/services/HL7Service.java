@@ -1,10 +1,13 @@
 package org.bahmni.module.lisintegration.services;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v25.group.ORM_O01_PATIENT;
 import ca.uhn.hl7v2.model.v25.message.ORM_O01;
 import ca.uhn.hl7v2.model.v25.segment.*;
+
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptMapping;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
@@ -14,6 +17,7 @@ import org.bahmni.module.lisintegration.exception.HL7MessageException;
 import org.bahmni.module.lisintegration.model.Order;
 import org.bahmni.module.lisintegration.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
@@ -27,6 +31,9 @@ public class HL7Service {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Value("${diagnosis_coding_method}")
+    private String diagnosisCodingMethod;
+
     public HL7Service() {
     }
 
@@ -39,12 +46,12 @@ public class HL7Service {
     private final String sender = "BahmniEMR";
     private final String email = "root@Example-lis.com";
 
-    public AbstractMessage createMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
-            List<OpenMRSProvider> providers) throws DataTypeException {
+    public AbstractMessage createMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
+            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
         if (order.isDiscontinued()) {
             return cancelOrderMessage(order, sample, openMRSPatient, providers);
         } else {
-            return createOrderMessage(order, sample, openMRSPatient, providers);
+            return createOrderMessage(order, diagnosisList, sample, openMRSPatient, providers);
         }
     }
 
@@ -52,18 +59,22 @@ public class HL7Service {
      * creates the order message
      *
      * @param order          is the object of {@link OpenMRSOrder)
+     * @param diagnosisList  is the list {@link List} object of {@link Diagnosis)
      * @param sample         is the object of {@link Sample)
      * @param openMRSPatient is the object of {@link OpenMRSPatient)
      * @param providers      represents the list of the providers
      * @return message returns the message which is created by this method
      * @throws DataTypeException if there is a problem with the data type
      */
-    private AbstractMessage createOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
-            List<OpenMRSProvider> providers) throws DataTypeException {
+    private AbstractMessage createOrderMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
+            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
         addProviderDetails(providers, message);
+        for (int diagnosis = 0; diagnosis < diagnosisList.size(); diagnosis++) {
+            addDiagnosis(message, diagnosisList.get(diagnosis), diagnosis);
+        }
 
         // handle ORC component
         ORC orc = message.getORDER().getORC();
@@ -91,6 +102,7 @@ public class HL7Service {
      * processes the message of a canceled order message
      *
      * @param order          is the object of {@link OpenMRSOrder)
+     * @param diagnosis      is the list {@link List} object of {@link Diagnosis)
      * @param sample         is the object of {@link Sample)
      * @param openMRSPatient is the object of {@link OpenMRSPatient)
      * @param providers      represents the list of the providers
@@ -207,6 +219,30 @@ public class HL7Service {
         msh.getProcessingID().getProcessingID().setValue("P"); // stands for production (?)
         msh.getVersionID().getVersionID().setValue("2.5");
         return msh;
+    }
+
+    /**
+     * adds the details of the Diagnosis to the HL7 message.
+     *
+     * @param message represents the ORM message.
+     * @param diagnosis represents the diagnosis which is linked to these details.
+     * @param order order of the diagnosis.
+     * @return message returns the segment which is created.
+     * @throws HL7Exception represents an exception encountered while processing an HL7 message.
+     */
+    public DG1 addDiagnosis(ORM_O01 message, Diagnosis diagnosis, Integer order) throws HL7Exception {
+        Integer orderDiagnos = order + 1;
+        DG1 dg1 = message.getORDER().getORDER_DETAIL().getDG1(order);
+
+        dg1.getSetIDDG1().setValue(orderDiagnos.toString());
+        dg1.getDiagnosisCodingMethod().setValue(diagnosisCodingMethod);
+        dg1.getDiagnosisCodeDG1().getIdentifier().setValue(diagnosis.getCode());
+        dg1.getDiagnosisCodeDG1().getText().setValue(diagnosis.getName());
+        dg1.getDiagnosisType().setValue(diagnosis.getType());
+        String dateDiagnosis = getHl7DateFormat().format(diagnosis.getDate());
+        dg1.getDiagnosisDateTime().getTime().setValue(dateDiagnosis);
+
+        return dg1;
     }
 
     String generateMessageControlID(String orderNumber) {
