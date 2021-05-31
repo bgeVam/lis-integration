@@ -1,6 +1,5 @@
 package org.bahmni.module.lisintegration.atomfeed.mappers;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
@@ -28,7 +28,19 @@ import ca.uhn.hl7v2.model.v25.segment.ORC;
 
 public class HL7ORUtoOpenMRSEncounterMapper {
 
-    public OpenMRSEncounter map(ORU_R01 oru) throws IOException, ParseException, HL7Exception {
+    /**
+     * Maps the ORU_R01 message.
+     *
+     * @param oru represents the ORU_R01 message.
+     * @return result returns the mapped ORU_R01 message.
+     * @throws ParseException if the message cannot be posted via {@link #setObsDateTime(obsDateTime)} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #getORDER_OBSERVATIONAll()} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #getOBSERVATIONAll()} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #setConctent(content)} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #setDateTime(dateTime)} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #setValue(value)} method.
+     */
+    public OpenMRSEncounter map(ORU_R01 oru) throws ParseException, HL7Exception {
 
         OpenMRSEncounter result = new OpenMRSEncounter();
 
@@ -48,6 +60,9 @@ public class HL7ORUtoOpenMRSEncounterMapper {
 
                         result.setPatientDocument(patientDocument);
                     }
+                } else if ("Results Interpretation".equals(obr.getUniversalServiceIdentifier().getText().getValue())) {
+                    //TODO
+                    assert true;
                 } else {
                     ORC orc = orderObservation.getORC();
                     String placerOrderNumber = orc.getPlacerOrderNumber().getEntityIdentifier().getValue();
@@ -96,7 +111,18 @@ public class HL7ORUtoOpenMRSEncounterMapper {
         return result;
     }
 
+
+    /**
+     * Converts the HL7 DateString to the OpenrMRS DateString.
+     *
+     * @param hl7DateString represents the HL7 Date format.
+     * @return formatted HL7 Date.
+     * @throws ParseException if the message cannot be posted via {@link #parse(hl7DateString)} method.
+     */
     private String convertHL7DateStringToOpenMRSDateString(String hl7DateString) throws ParseException {
+        if (StringUtils.isEmpty(hl7DateString)) {
+            return "";
+        }
         DateFormat inputDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date date = inputDateFormat.parse(hl7DateString);
