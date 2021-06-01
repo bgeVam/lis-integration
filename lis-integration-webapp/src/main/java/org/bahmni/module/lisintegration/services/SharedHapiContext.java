@@ -14,8 +14,8 @@ public class SharedHapiContext {
 
     public SharedHapiContext() {
         hapiContext = new DefaultHapiContext();
-        // TODO configure the length of the hl7 message
-        hapiContext.setValidationContext((ValidationContext) ValidationContextFactory.noValidation());
+        hapiContext.setValidationContext((ValidationContext) ValidationContextFactory
+                .fromBuilder(new DefaultValidationWithExtendedISDataTypeLength()));
     }
 
     public final HapiContext getHapiContext() {
