@@ -3,6 +3,7 @@ package org.bahmni.module.lisintegration.services;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.v25.message.ADR_A19;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
@@ -78,7 +79,7 @@ public class LisIntegrationServiceTest {
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null);
-        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class),
+        when(hl7Service.createMessage(any(OpenMRSOrder.class), anyListOf(Diagnosis.class), any(Sample.class), any(OpenMRSPatient.class),
                 any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
         when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");
@@ -96,7 +97,7 @@ public class LisIntegrationServiceTest {
         when(openMRSService.getPatient(PATIENT_UUID)).thenReturn(new OpenMRSPatient());
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null).thenReturn(new Order());
-        when(hl7Service.createMessage(any(OpenMRSOrder.class), any(Sample.class), any(OpenMRSPatient.class),
+        when(hl7Service.createMessage(any(OpenMRSOrder.class), anyListOf(Diagnosis.class), any(Sample.class), any(OpenMRSPatient.class),
                 any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
         when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");

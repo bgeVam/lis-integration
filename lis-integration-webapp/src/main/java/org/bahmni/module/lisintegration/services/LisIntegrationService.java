@@ -3,6 +3,8 @@ package org.bahmni.module.lisintegration.services;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.AbstractMessage;
+
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
@@ -101,7 +103,9 @@ public class LisIntegrationService {
             if (orderRepository.findByPlacerOrderUuid(openMRSOrder.getUuid()) == null) {
                 OpenMRSConcept openMRSConcept = openMRSOrder.getConcept();
                 Sample sample = openMRSService.getSample(openMRSConcept.getUuid());
-                AbstractMessage request = hl7Service.createMessage(openMRSOrder, sample, patient,
+                List<Diagnosis> diagnosis = openMRSService.getDiagnosis(openMRSEncounter.getEncounterUuid());
+                AbstractMessage request = hl7Service.createMessage(openMRSOrder, diagnosis, sample, patient,
+
                         openMRSEncounter.getProviders());
                 String response = lisService.sendMessage(request, openMRSOrder.getOrderType(), openMRSOrder);
                 Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample,
