@@ -27,6 +27,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConce
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSPerson;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
@@ -34,6 +35,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient
 import org.bahmni.module.lisintegration.atomfeed.mappers.DiagnosisMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPatientMapper;
+import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPersonMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OrderMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.SampleMapper;
 import org.bahmni.webclients.HttpClient;
@@ -48,6 +50,9 @@ import org.apache.log4j.Logger;
 @Component
 public class OpenMRSService {
     private String patientRestUrl = "/openmrs/ws/rest/v1/patient/";
+    private String personRestUrl = "/openmrs/ws/rest/v1/person/";
+    private String providerRestUrl = "/openmrs/ws/rest/v1/provider/";
+
     private static final org.apache.log4j.Logger LOG = Logger.getLogger(OpenMRSService.class);
 
     @Value("${green.letters}")
@@ -298,4 +303,41 @@ public class OpenMRSService {
         String concpet = webClient.get(URI.create(urlPrefix + concpetAPI));
         return concpet;
     }
+    /**
+     * The method getPersonUuidByProviderUuid is called to fetch person uuid from provider uuid
+     *
+     * @param providerUUID used to fetch provider details
+     * @return String - person uuid
+     * @throws IOException if the message cannot be created via
+     *                     {@link #readTree(providerJson)}
+     */
+    public String getPersonUuidByProviderUuid(String providerUUID) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String providerJson =  webClient.get(URI.create(urlPrefix + providerRestUrl + providerUUID + "?v=full"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode json = objectMapper.readTree(providerJson);
+        String personUUID = json.path("person").path("uuid").asText();
+
+        return personUUID;
+    }
+
+    /**
+     * The method getPerson is called to fetch person data from person uuid
+     *
+     * @param personUUID used to fetch person details
+     * @return personJSON mapped
+     * @throws IOException if the message cannot be created via
+     *                     {@link #map(personJSON)}
+     *                     method
+     */
+    public OpenMRSPerson getPerson(String personUUID) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String personJSON = webClient.get(URI.create(urlPrefix + personRestUrl + personUUID + "?v=full"));
+
+        return new OpenMRSPersonMapper().map(personJSON);
+    }
+
 }
