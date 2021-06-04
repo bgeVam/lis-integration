@@ -65,7 +65,7 @@ public class ORUHandlerTests {
         OpenMRSOrder openMRSOrder = new OpenMRSOrder();
         openMRSOrder.setPatient(openMRSPatient);
         PatientDocument patientDocument = new PatientDocument();
-        patientDocument.setConctent("Content-of-pdf-document");
+        patientDocument.setContent("Content-of-pdf-document");
         patientDocument.setEncounterTypeName("pdf");
         openMRSEncounter.setOrders(Arrays.asList(openMRSOrder));
         openMRSEncounter.setPatientDocument(patientDocument);
