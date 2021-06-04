@@ -54,7 +54,7 @@ public class HL7ORUtoOpenMRSEncounterMapper {
                         OBX obxDocument = observation.getOBX();
 
                         PatientDocument patientDocument = new PatientDocument();
-                        patientDocument.setConctent(obxDocument.getObservationValue()[0].encode());
+                        patientDocument.setContent(obxDocument.getObservationValue()[0].encode());
                         patientDocument.setEncounterTypeName(obr.getUniversalServiceIdentifier().getText().getValue());
                         patientDocument.setDateTime(obxDocument.getObservationValue()[0].encode());
 

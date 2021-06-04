@@ -112,6 +112,16 @@ public class ORUHandler implements ReceivingApplication {
         return true;
     }
 
+    /**
+     * generateVisitDocument is the method which gathers the visit documentation information.
+     *
+     * @param openMRSEncounter used to fetch the encounter data
+     * @param encounterJSONNode used to fetch the order encounter in JSONNode format
+     * @param image used to fetch the image
+     * @param patientDocumentTypeUUID used to fetch patient document typer uuid
+     * @param encounterPatientDocumentUUID used to fetch encounter patient document uuid
+     * @return VisitDocument object
+     */
     static VisitDocument generateVisitDocument(OpenMRSEncounter openMRSEncounter, JsonNode encounterJSONNode,
             String image, String patientDocumentTypeUUID, String encounterPatientDocumentUUID) {
         Document document = new Document();
@@ -131,10 +141,17 @@ public class ORUHandler implements ReceivingApplication {
         return visitDocument;
     }
 
+    /**
+     * generateUploadDocument is the method which gathers for uploading the document
+     *
+     * @param openMRSEncounter used to fetch the encounter data
+     * @param formatFilePDF used to fetch the format of the document
+     * @return UploadDocument object
+     */
     static UploadDocument generateUploadDocument(OpenMRSEncounter openMRSEncounter, String formatFilePDF) {
         UploadDocument uploadDocument = new UploadDocument();
         uploadDocument.setPatientUuid(openMRSEncounter.getOrders().get(0).getPatient().getPatientUUID());
-        uploadDocument.setContent(openMRSEncounter.getPatientDocument().getConctent());
+        uploadDocument.setContent(openMRSEncounter.getPatientDocument().getContent());
         uploadDocument.setEncounterTypeName(openMRSEncounter.getPatientDocument().getEncounterTypeName());
         uploadDocument.setFileType(formatFilePDF);
         uploadDocument.setFormat(formatFilePDF);
@@ -159,6 +176,7 @@ public class ORUHandler implements ReceivingApplication {
         visit.setUuid(encounterJSONNode.path("visit").path("uuid").getTextValue());
         openMRSEncounter.setVisit(visit);
     }
+
     static void fillObservation(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder) throws IOException {
         ORUHandler oruHandler = new ORUHandler();
         OpenMRSService openMRSService = new OpenMRSService();

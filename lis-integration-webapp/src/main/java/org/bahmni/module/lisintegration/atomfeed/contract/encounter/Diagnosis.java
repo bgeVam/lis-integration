@@ -21,7 +21,7 @@ public class Diagnosis {
     /**
      * This method sets the code of the diagnosis.
      *
-     * @return String
+     * @param code
      */
     public void setCode(String code) {
         this.code = code;
@@ -39,7 +39,7 @@ public class Diagnosis {
     /**
      * This method sets the name of the diagnosis.
      *
-     * @return String
+     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -57,7 +57,7 @@ public class Diagnosis {
     /**
      * This method sets the type of the diagnosis.
      *
-     * @return String
+     * @param type
      */
     public void setType(String type) {
         this.type = type;
@@ -75,7 +75,7 @@ public class Diagnosis {
     /**
      * This method sets the date createing of the diagnosis.
      *
-     * @return String
+     * @param date
      */
     public void setDate(Date date) {
         this.date = date;
@@ -93,7 +93,7 @@ public class Diagnosis {
     /**
      * This method sets the code method of the diagnosis.
      *
-     * @return String
+     * @param codeMethode
      */
     public void setCodeMethode(String codeMethode) {
         this.codeMethode = codeMethode;
