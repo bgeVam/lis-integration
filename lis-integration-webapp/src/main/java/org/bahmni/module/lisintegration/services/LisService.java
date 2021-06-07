@@ -78,6 +78,21 @@ public class LisService {
             String fillerOrderUuid = acknowledgement.getRESPONSE().getORDER().getORC().getFillerOrderNumber()
                     .getEntityIdentifier().toString();
             openMRSOrder.setFillerOrderUuid(fillerOrderUuid);
+
+            // Cancel log information
+            String statusORC = acknowledgement.getRESPONSE().getORDER().getORC().getOrderControl().getValue();
+            if ("CA".equals(statusORC)) {
+                String orderBahmniUuid = acknowledgement.getRESPONSE().getORDER().getORC()
+                                                        .getPlacerOrderNumber().getEntityIdentifier().getValue();
+                String orderSenaiteUid = acknowledgement.getRESPONSE().getORDER().getORC()
+                                                        .getFillerOrderNumber().getEntityIdentifier().getValue();
+
+                LOG.info(printGreen + "The Order with Bahmni UUID: " + orderBahmniUuid
+                                    + "is canceled successfully." + printDefault);
+                LOG.info(printGreen + "The Order with Senait UID: " + orderSenaiteUid
+                                    + "is canceled successfully." + printDefault);
+            }
+
         } else if (response instanceof ACK) {
             ACK acknowledgement = (ACK) response;
             String acknowledgmentCode = acknowledgement.getMSA().getAcknowledgmentCode().getValue();
