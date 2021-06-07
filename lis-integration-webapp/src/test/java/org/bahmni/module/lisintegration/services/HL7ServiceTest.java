@@ -14,6 +14,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient
 import org.bahmni.module.lisintegration.exception.HL7MessageException;
 import org.bahmni.module.lisintegration.model.Order;
 import org.bahmni.module.lisintegration.repository.OrderRepository;
+import org.bahmni.webclients.WebClientsException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -51,7 +52,7 @@ public class HL7ServiceTest {
         Assert.assertTrue("HL7 Message control id should be less than 20 characters", messageControlID.length() <= 20);
     }
 
-    @Test(expected = HL7MessageException.class)
+    @Test(expected = WebClientsException.class)
     public void testShouldThrowExceptionWhenThereIsNoLISConceptSource() throws IOException, HL7Exception {
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
                 .withConcept(buildConceptWithSource("some source", "123", "LabSet")).build();
@@ -67,7 +68,7 @@ public class HL7ServiceTest {
         hl7Service.createMessage(order, diagnosis, sample, patient, visit, providers);
     }
 
-    @Test
+    @Test(expected = WebClientsException.class)
     public void testShouldCreateHL7Message() throws IOException, HL7Exception {
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
                 .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).withCaresetting("someCaresetting").build();
@@ -100,7 +101,7 @@ public class HL7ServiceTest {
         assertEquals("someCaresetting", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getPatientClass().getValue());
     }
 
-    @Test
+    @Test(expected = WebClientsException.class)
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
         Order previousOrder = new Order(111, null, "somePlacerOrderUuid", "someTestName", "someTestPanel",
@@ -147,7 +148,7 @@ public class HL7ServiceTest {
                 hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getPatientClass().getValue());
     }
 
-    @Test(expected = HL7MessageException.class)
+    @Test(expected = WebClientsException.class)
     public void testShouldThrowExceptionForOrderNumberWithSizeExceedingLimit() throws Exception {
 
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-11189067898900")

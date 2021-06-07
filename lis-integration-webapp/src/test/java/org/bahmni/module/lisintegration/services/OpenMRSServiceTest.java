@@ -153,4 +153,36 @@ public class OpenMRSServiceTest extends OpenMRSMapperBaseTest {
         assertEquals("Leukocytes", testConcepts.get(0).getName().getName());
         assertEquals("4e905b9d-83f6-43c6-b388-0e1f9490c39b", testConcepts.get(0).getUuid());
     }
+
+    @Test
+    public void shouldGetPersonUuidByProviderUuid() throws Exception {
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI(
+                "http://localhost:8050/openmrs/ws/rest/v1/provider/c1c26908-3f10-11e4-adec-0800271c1b75?v=full")))
+                        .thenReturn(new OpenMRSMapperBaseTest().deserialize("/provider.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/provider.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        OpenMRSService openMRSService = new OpenMRSService();
+        assertEquals(openMRSService.getPersonUuidByProviderUuid(
+            "c1c26908-3f10-11e4-adec-0800271c1b75"), "c1bc22a5-3f10-11e4-adec-0800271c1b75");
+    }
+
+    @Test
+    public void shouldGetPerson() throws Exception {
+        PowerMockito.mockStatic(WebClientFactory.class);
+        when(WebClientFactory.getClient()).thenReturn(webClient);
+        when(webClient.get(new URI(
+                "https://localhost:8050/openmrs/ws/rest/v1/person/c1bc22a5-3f10-11e4-adec-0800271c1b75?v=full")))
+                        .thenReturn(new OpenMRSMapperBaseTest().deserialize("/person.json"));
+
+        when(webClient.get(any(URI.class))).thenReturn(deserialize("/person.json"));
+        when(connectionDetails.getAuthUrl()).thenReturn("urlPrefix");
+
+        OpenMRSService openMRSService = new OpenMRSService();
+        assertEquals("Man", openMRSService.getPerson("c1bc22a5-3f10-11e4-adec-0800271c1b75").getFamilyName());
+    }
+
 }
