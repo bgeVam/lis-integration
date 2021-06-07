@@ -1,14 +1,17 @@
 package org.bahmni.module.lisintegration.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Document;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.NoteEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSObs;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSProvider;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
@@ -16,6 +19,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncoun
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.VisitDocument;
 import org.bahmni.module.lisintegration.atomfeed.mappers.HL7ORUtoOpenMRSEncounterMapper;
+import org.bahmni.module.lisintegration.atomfeed.mappers.NoteMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.ResultMapper;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -46,6 +50,15 @@ public class ORUHandler implements ReceivingApplication {
 
     @Value("${encounter.type.patient_document.uuid}")
     private String encounterPatientDocumentUUID;
+
+    @Value("${concept.accession_uuid}")
+    private String conceptAccessionUuid;
+
+    @Value("${concept.accession_note}")
+    private String conceptAccessionNote;
+
+    @Value("${encounter.type.validation_note}")
+    private String encounterValidationUuid;
 
     @Value("pdf")
     private String formatFilePDF;
@@ -80,7 +93,7 @@ public class ORUHandler implements ReceivingApplication {
             fillOpenMRSEncounter(openMRSEncounter, openMRSOrder, encounterJSONNode, providerUUID,
                     encounterLabResultUUID, encounterRoleUUID, orderEncounter);
 
-            fillObservation(openMRSEncounter, openMRSOrder);
+            fillObservation(openMRSEncounter, openMRSOrder, conceptAccessionUuid);
             ResultEncounter result = new ResultMapper().map(openMRSEncounter);
 
             openMRSService.postResult(result);
@@ -98,6 +111,11 @@ public class ORUHandler implements ReceivingApplication {
 
             openMRSService.postResult(visitDocument);
 
+            // Fetching note result
+            NoteEncounter noteEncounter = new NoteMapper().map(openMRSEncounter, encounterJSONNode,
+                                                               conceptAccessionNote, encounterValidationUuid);
+            openMRSService.postResult(noteEncounter);
+
             return message.generateACK();
         } catch (Throwable t) {
             LOG.error("Throwable caught: ", t);
@@ -113,13 +131,16 @@ public class ORUHandler implements ReceivingApplication {
     }
 
     /**
-     * generateVisitDocument is the method which gathers the visit documentation information.
+     * generateVisitDocument is the method which gathers the visit documentation
+     * information.
      *
-     * @param openMRSEncounter used to fetch the encounter data
-     * @param encounterJSONNode used to fetch the order encounter in JSONNode format
-     * @param image used to fetch the image
-     * @param patientDocumentTypeUUID used to fetch patient document typer uuid
-     * @param encounterPatientDocumentUUID used to fetch encounter patient document uuid
+     * @param openMRSEncounter             used to fetch the encounter data
+     * @param encounterJSONNode            used to fetch the order encounter in
+     *                                     JSONNode format
+     * @param image                        used to fetch the image
+     * @param patientDocumentTypeUUID      used to fetch patient document typer uuid
+     * @param encounterPatientDocumentUUID used to fetch encounter patient document
+     *                                     uuid
      * @return VisitDocument object
      */
     static VisitDocument generateVisitDocument(OpenMRSEncounter openMRSEncounter, JsonNode encounterJSONNode,
@@ -168,7 +189,7 @@ public class ORUHandler implements ReceivingApplication {
         openMRSEncounter.setEncounterType(encounterLabResultUUID);
         openMRSEncounter.setEncounterRole(encounterRoleUUID);
         openMRSEncounter.setEncounterUuid(openMRSOrder.getEncounter().getEncounterUuid());
-
+        openMRSEncounter.setEncounterDatetime(encounterJSONNode.path("encounterDatetime").asText());
         openMRSEncounter.setPatientUuid(openMRSEncounter.getOrders().get(0).getPatient().getPatientUUID());
         openMRSEncounter.setProviders(Arrays.asList(provider));
 
@@ -177,9 +198,41 @@ public class ORUHandler implements ReceivingApplication {
         openMRSEncounter.setVisit(visit);
     }
 
-    static void fillObservation(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder) throws IOException {
+    /**
+     * The method fillObservation fills observation in case the observation is note, panel or
+     * test
+     *
+     * @param openMRSEncounter fetch the Encounter data
+     * @param openMRSOrder     fetch the information for an order
+     * @throws IOException if the ValueText cannot be fetched via
+     *                     {@link #getUuidVisitEncounter()} method
+     * @throws IOException if the ObsDateTime cannot be fetched via
+     *                     {@link #getObsDateTime()} method
+     */
+    static void fillObservation(OpenMRSEncounter openMRSEncounter, OpenMRSOrder openMRSOrder,
+            String conceptAccessionUuid) throws IOException {
         ORUHandler oruHandler = new ORUHandler();
         OpenMRSService openMRSService = new OpenMRSService();
+        // fill observation for Note
+        if (openMRSEncounter.isNote()) {
+            List<OpenMRSObs> noteObservations = new ArrayList();
+            //obsAccessionNote is the first observation which takes the valueText associated
+            //with the Note and the static field of concept.
+            OpenMRSObs obsAccessionNote = openMRSEncounter.getOpenMRSObs().get(0);
+            noteObservations.add(obsAccessionNote);
+
+            //obsAccessionUuid is the second observation which takes the valueText associated
+            //with the uuid of the encounter of the visit made and the static field of concept.
+            OpenMRSObs obsAccessionUuid = new OpenMRSObs();
+            obsAccessionUuid.setValueText(openMRSService.getUuidVisitEncounter(openMRSEncounter.getVisit().getUuid()));
+            obsAccessionUuid.setObsDateTime(obsAccessionNote.getObsDateTime());
+            OpenMRSConcept openMRSConcept = new OpenMRSConcept();
+            openMRSConcept.setUuid(conceptAccessionUuid);
+            obsAccessionUuid.setConcept(openMRSConcept);
+            noteObservations.add(obsAccessionUuid);
+
+            openMRSEncounter.setOpenMRSObs(noteObservations);
+        }
         // fill observation for Panel
         if (openMRSEncounter.isPanel()) {
             List<OpenMRSConcept> listOfTests = openMRSService.getTestsOfPanel(openMRSOrder.getConcept().getUuid());

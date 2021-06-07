@@ -15,6 +15,7 @@ public class Observation {
     private String concept;
     private List<Observation> groupMembers = new ArrayList<Observation>();
     private Double value;
+    private String valueText;
 
     public  Observation() {
 
@@ -66,5 +67,13 @@ public class Observation {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public String getValueText() {
+        return this.valueText;
+    }
+
+    public void setValueText(String valueText) {
+        this.valueText = valueText;
     }
 }

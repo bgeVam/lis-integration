@@ -39,6 +39,7 @@ public class HL7ORUtoOpenMRSEncounterMapper {
      * @throws HL7Exception if the message cannot be parsed by {@link #setConctent(content)} method.
      * @throws HL7Exception if the message cannot be parsed by {@link #setDateTime(dateTime)} method.
      * @throws HL7Exception if the message cannot be parsed by {@link #setValue(value)} method.
+     * @throws HL7Exception if the message cannot be parsed by {@link #setValueText(value)} method.
      */
     public OpenMRSEncounter map(ORU_R01 oru) throws ParseException, HL7Exception {
 
@@ -61,8 +62,16 @@ public class HL7ORUtoOpenMRSEncounterMapper {
                         result.setPatientDocument(patientDocument);
                     }
                 } else if ("Results Interpretation".equals(obr.getUniversalServiceIdentifier().getText().getValue())) {
-                    //TODO
-                    assert true;
+                    OpenMRSObs obs = new OpenMRSObs();
+                    result.setNote(true);
+                    for (ORU_R01_OBSERVATION observation : orderObservation.getOBSERVATIONAll()) {
+                        OBX obx = observation.getOBX();
+                        obs.setValueText(obx.getObservationValue()[0].encode());
+                        obs.setObsDateTime(obx.getDateTimeOfTheObservation().getTime().getValue());
+                        List<OpenMRSObs> allobs = new ArrayList<>();
+                        allobs.add(obs);
+                        result.setOpenMRSObs(allobs);
+                    }
                 } else {
                     ORC orc = orderObservation.getORC();
                     String placerOrderNumber = orc.getPlacerOrderNumber().getEntityIdentifier().getValue();

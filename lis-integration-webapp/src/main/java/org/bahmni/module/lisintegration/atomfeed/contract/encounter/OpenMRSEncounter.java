@@ -18,6 +18,25 @@ public class OpenMRSEncounter {
     private OpenMRSVisit visit;
     private PatientDocument patientDocument;
     private boolean panel;
+    private String encounterDatetime;
+    private List<OpenMRSObs> openMRSObs;
+    private boolean note;
+
+    public boolean isNote() {
+        return this.note;
+    }
+
+    public void setNote(boolean note) {
+        this.note = note;
+    }
+
+    public List<OpenMRSObs> getOpenMRSObs() {
+        return this.openMRSObs;
+    }
+
+    public void setOpenMRSObs(List<OpenMRSObs> openMRSObs) {
+        this.openMRSObs = openMRSObs;
+    }
 
     public boolean isPanel() {
         return this.panel;
@@ -137,5 +156,13 @@ public class OpenMRSEncounter {
 
     public void setVisit(OpenMRSVisit visit) {
         this.visit = visit;
+    }
+
+    public String getEncounterDatetime() {
+        return this.encounterDatetime;
+    }
+
+    public void setEncounterDatetime(String encounterDatetime) {
+        this.encounterDatetime = encounterDatetime;
     }
 }

@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthenticationException;
@@ -418,5 +419,30 @@ public class OpenMRSService {
         String personUUID = json.path("person").path("uuid").asText();
 
         return personUUID;
+    }
+
+    /**
+     * The method getUuidVisitEncounter gets the uuid of Consultation Encounter
+     *
+     * @param uuid the uuid of the visit
+     * @return consultationEncounterUuid returns the uuid of Consultation Encounter
+     * @throws JsonProcessingException if problem occurs while processing JSON content
+     * @throws IOException if the uuid cannot be fetched
+     */
+    public String getUuidVisitEncounter(String uuid) throws JsonProcessingException, IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String concpetAPI = "/openmrs/ws/rest/v1/visit/" + uuid + "?v=full";
+        String visitJSON = webClient.get(URI.create(urlPrefix + concpetAPI));
+        ObjectMapper visitObjectMapper = ObjectMapperRepository.objectMapper;
+        JsonNode json = visitObjectMapper.readTree(visitJSON);
+        String consultationEncounterUuid = "";
+        for (JsonNode encounter :   json.path("encounters")) {
+            String encounterTypeUuid = encounter.path("encounterType").path("uuid").asText();
+            if (encounterTypeUuid.equals("81852aee-3f10-11e4-adec-0800271c1b75")) {
+                consultationEncounterUuid = encounter.path("uuid").asText();
+            }
+        }
+        return consultationEncounterUuid;
     }
 }
