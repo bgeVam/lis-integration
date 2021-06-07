@@ -7,6 +7,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterToOrderMapper;
@@ -80,7 +81,7 @@ public class LisIntegrationServiceTest {
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null);
         when(hl7Service.createMessage(any(OpenMRSOrder.class), anyListOf(Diagnosis.class), any(Sample.class), any(OpenMRSPatient.class),
-                any(List.class))).thenReturn(adr_a19);
+                any(OpenMRSVisit.class), any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
         when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");
         when(openMRSService.getSample("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb")).thenReturn(new Sample());
@@ -98,7 +99,7 @@ public class LisIntegrationServiceTest {
         when(orderTypeRepository.findAll()).thenReturn(getAcceptableOrderTypes());
         when(orderRepository.findByPlacerOrderUuid(any(String.class))).thenReturn(null).thenReturn(new Order());
         when(hl7Service.createMessage(any(OpenMRSOrder.class), anyListOf(Diagnosis.class), any(Sample.class), any(OpenMRSPatient.class),
-                any(List.class))).thenReturn(adr_a19);
+               any(OpenMRSVisit.class), any(List.class))).thenReturn(adr_a19);
         when(adr_a19.encode()).thenReturn("Request message");
         when(openMRSConcept.getUuid()).thenReturn("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb");
         when(openMRSService.getSample("f6879abe-ac34-4b35-ae87-2b1c84f9a0fb")).thenReturn(new Sample());

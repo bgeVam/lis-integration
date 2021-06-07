@@ -8,6 +8,7 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Diagnosis;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConcept;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterToOrderMapper;
@@ -88,13 +89,17 @@ public class LisIntegrationService {
      *                        {@link #createMessage(openMRSOrder, sample, openMRSPatient, providers)}
      *                        method
      * @throws HL7Exception   if the message cannot be sent via
-     *                        {@link #sendMessage(message, orderType, openMRSOrder)} method
+     *                        {@link #sendMessage(message, orderType, openMRSOrder)}
+     *                        method
      * @throws LLPException   if the message cannot be sent via
-     *                        {@link #sendMessage(message, orderType, openMRSOrder)} method
+     *                        {@link #sendMessage(message, orderType, openMRSOrder)}
+     *                        method
      */
     public void processEncounter(OpenMRSEncounter openMRSEncounter)
             throws IOException, ParseException, HL7Exception, LLPException {
         OpenMRSPatient patient = openMRSService.getPatient(openMRSEncounter.getPatientUuid());
+        OpenMRSVisit visit = (openMRSEncounter.getVisit() == null) ? null
+            : openMRSService.getVisit(openMRSEncounter.getVisit().getUuid());
         List<OrderType> acceptableOrderTypes = orderTypeRepository.findAll();
 
         List<OpenMRSOrder> newAcceptableTestOrders = openMRSEncounter.getAcceptableTestOrders(acceptableOrderTypes);
@@ -106,7 +111,7 @@ public class LisIntegrationService {
                 List<Diagnosis> diagnosis = openMRSService.getDiagnosis(openMRSEncounter.getEncounterUuid());
                 AbstractMessage request = hl7Service.createMessage(openMRSOrder, diagnosis, sample, patient,
 
-                        openMRSEncounter.getProviders());
+                        visit, openMRSEncounter.getProviders());
                 String response = lisService.sendMessage(request, openMRSOrder.getOrderType(), openMRSOrder);
                 Order order = openMRSEncounterToOrderMapper.map(openMRSOrder, openMRSEncounter, sample,
                         acceptableOrderTypes);

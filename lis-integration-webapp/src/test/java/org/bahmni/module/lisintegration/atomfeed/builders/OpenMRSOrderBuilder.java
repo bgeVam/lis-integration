@@ -15,6 +15,11 @@ public class OpenMRSOrderBuilder {
         return this;
     }
 
+    public OpenMRSOrderBuilder withCaresetting(String careSetting) {
+        openMRSOrder.setCareSetting(careSetting);
+        return this;
+    }
+
     public OpenMRSOrderBuilder withOrderType(String orderType) {
         openMRSOrder.setOrderType(orderType);
         return this;

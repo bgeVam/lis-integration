@@ -24,6 +24,7 @@ public class OpenMRSOrder {
     private Date dateCreated;
     private OpenMRSPatient patient;
     private OpenMRSEncounter encounter;
+    private String careSetting;
 
     public String getUrgency() {
         String statusPriority = null;
@@ -52,9 +53,7 @@ public class OpenMRSOrder {
     }
 
     public OpenMRSOrder(final String uuid, final String orderType, final OpenMRSConcept concept, final Boolean voided,
-            final String action,
-            final String previousOrderUuid,
-            final String fillerOrderUuid) {
+            final String action, final String previousOrderUuid, final String fillerOrderUuid) {
         this.uuid = uuid;
         this.orderType = orderType;
         this.voided = voided;
@@ -186,5 +185,13 @@ public class OpenMRSOrder {
 
     public void setFillerOrderUuid(String fillerOrderUuid) {
         this.fillerOrderUuid = fillerOrderUuid;
+    }
+
+    public String getCareSetting() {
+        return this.careSetting;
+    }
+
+    public void setCareSetting(String careSetting) {
+        this.careSetting = careSetting;
     }
 }

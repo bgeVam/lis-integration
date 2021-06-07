@@ -27,6 +27,9 @@ import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConce
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSConceptName;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSOrder;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSPerson;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSRelationship;
+import org.bahmni.module.lisintegration.atomfeed.contract.encounter.OpenMRSVisit;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.ResultEncounter;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.Sample;
 import org.bahmni.module.lisintegration.atomfeed.contract.encounter.UploadDocument;
@@ -34,6 +37,8 @@ import org.bahmni.module.lisintegration.atomfeed.contract.patient.OpenMRSPatient
 import org.bahmni.module.lisintegration.atomfeed.mappers.DiagnosisMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSEncounterMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPatientMapper;
+import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSPersonMapper;
+import org.bahmni.module.lisintegration.atomfeed.mappers.OpenMRSVisitMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.OrderMapper;
 import org.bahmni.module.lisintegration.atomfeed.mappers.SampleMapper;
 import org.bahmni.webclients.HttpClient;
@@ -48,6 +53,9 @@ import org.apache.log4j.Logger;
 @Component
 public class OpenMRSService {
     private String patientRestUrl = "/openmrs/ws/rest/v1/patient/";
+    private String visitRestUrl = "/openmrs/ws/rest/v1/visit/";
+    private String personRestUrl = "/openmrs/ws/rest/v1/person/";
+    private String relationshipRestAPI = "/openmrs/ws/rest/v1/relationship?v=full";
     private static final org.apache.log4j.Logger LOG = Logger.getLogger(OpenMRSService.class);
 
     @Value("${green.letters}")
@@ -62,12 +70,27 @@ public class OpenMRSService {
     @Autowired
     private DiagnosisMapper diagnosisMapper;
 
+    @Value("${relationship.type.patient_doctor.uuid}")
+    private String patientDoctorUuid;
+
+    @Autowired
+    OpenMRSVisitMapper visitMapper;
+
+    /**
+     * This method is used to get the encounter from the API.
+     *
+     * @param encounterUrl is the url where we get the encounter from.
+     * @return openMRSEncounter returns the {@link OpenMRSEncounter}
+     *         populated with the data form the API.
+     * @throws IOException if the Encounter cannot be mapped via {@link #map(OpenMRSEncounter)} method.
+     */
     public OpenMRSEncounter getEncounter(String encounterUrl) throws IOException {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
         String encounterJSON = webClient.get(URI.create(urlPrefix + encounterUrl));
-        return new OpenMRSEncounterMapper(ObjectMapperRepository.objectMapper).map(encounterJSON);
+
+        return  new OpenMRSEncounterMapper(ObjectMapperRepository.objectMapper).map(encounterJSON);
     }
 
     public OpenMRSPatient getPatient(String patientUuid) throws IOException, ParseException {
@@ -76,6 +99,75 @@ public class OpenMRSService {
 
         String patientJSON = webClient.get(URI.create(urlPrefix + patientRestUrl + patientUuid + "?v=full"));
         return new OpenMRSPatientMapper().map(patientJSON);
+    }
+
+    /**
+     * The method getVisit is the method which is called for retriving a visit from the API
+     *
+     * @param visitUuid is used to determine which visit to retrive
+     * @return newVisit return a new{@link OpenMRSVisit} object that contains the
+     *         all the data of a visit
+     * @throws IOException if the String cannot be read via {@link #readTree(String)} method.
+     * @throws ParseException if the visit cannot be mapped via {@link #map(OpenMRSVisit)} method.
+     */
+    public OpenMRSVisit getVisit(String visitUuid) throws IOException, ParseException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlPrefix = getURLPrefix();
+        String visit = webClient.get(URI.create(urlPrefix + visitRestUrl + visitUuid + "?v=full"));
+
+        ObjectMapper visitObjectMapper = ObjectMapperRepository.objectMapper;
+        JsonNode visitJSON = visitObjectMapper.readTree(visit);
+
+        ArrayList<OpenMRSRelationship> relationships = getRelationships(
+                visitJSON.path("patient").path("uuid").asText());
+        OpenMRSVisit newVisit = visitMapper.map(visit);
+        newVisit.setRelationships(relationships);
+        return newVisit;
+    }
+
+    /**
+     * The method getRelationships is the method which is called to get the relationships of a
+     * specific patient
+     *
+     * @param patientUuid is used to determine the patient whose relations we want
+     * @return groupRelationships return a new {@link OpenMRSRelationship} arraylist
+     *         where each entry represents a relationship of the patient
+     * @throws IOException if the String cannot be read via {@link #readTree(String)} method.
+     */
+    public ArrayList<OpenMRSRelationship> getRelationships(String patientUuid)
+            throws  IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlprefix = getURLPrefix();
+
+        String relationshipRaw = webClient.get(URI.create(urlprefix + relationshipRestAPI));
+        ObjectMapper relationshipObjectMapper = ObjectMapperRepository.objectMapper;
+        JsonNode relationshipJSON = relationshipObjectMapper.readTree(relationshipRaw);
+        JsonNode results = relationshipJSON.path("results");
+        ArrayList<OpenMRSRelationship> groupedRelationships = new ArrayList<>();
+        for (JsonNode relationshipResult : results) {
+            String relationshipTypeUuid = relationshipResult.path("relationshipType").path("uuid").asText();
+            if (relationshipTypeUuid.equals(patientDoctorUuid)) {
+                String personAUuid = relationshipResult.path("personA").path("uuid").asText();
+                String personBUuid = relationshipResult.path("personB").path("uuid").asText();
+                if (personAUuid.equals(patientUuid)) {
+                    OpenMRSPerson person = getPerson(personBUuid);
+                    OpenMRSRelationship relationship = new OpenMRSRelationship();
+                    relationship.setDoctor(person);
+                    groupedRelationships.add(relationship);
+                }
+            }
+        }
+
+        return groupedRelationships;
+    }
+
+    public OpenMRSPerson getPerson(String personUuid) throws IOException {
+        HttpClient webClient = WebClientFactory.getClient();
+        String urlprefix = getURLPrefix();
+
+        String personJSON = webClient.get(URI.create(urlprefix + personRestUrl + personUuid + "?v=full"));
+       return new OpenMRSPersonMapper().map(personJSON);
+
     }
 
     public Sample getSample(String conceptUUID) throws IOException {
@@ -118,7 +210,7 @@ public class OpenMRSService {
         HttpClient webClient = WebClientFactory.getClient();
         String urlPrefix = getURLPrefix();
 
-        String orderAPI = "/openmrs/ws/rest/v1/order/" + orderUUID;
+        String orderAPI = "/openmrs/ws/rest/v1/order/" + orderUUID + "?v=full";
         String orderJSON = webClient.get(URI.create(urlPrefix + orderAPI));
 
         return new OrderMapper().map(orderJSON);

@@ -52,50 +52,82 @@ public class HL7ServiceTest {
     }
 
     @Test(expected = HL7MessageException.class)
-    public void testShouldThrowExceptionWhenThereIsNoLISConceptSource() throws HL7Exception {
+    public void testShouldThrowExceptionWhenThereIsNoLISConceptSource() throws IOException, HL7Exception {
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
                 .withConcept(buildConceptWithSource("some source", "123", "LabSet")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
+        OpenMRSVisit visit = new OpenMRSVisit();
+        visit.setRelationships(new ArrayList<>());
+        visit.setOrder(order);
         List<OpenMRSProvider> providers = getProvidersData();
         List<Diagnosis> diagnosis = new ArrayList<Diagnosis>(0);
 
         HL7Service hl7Service = new HL7Service();
-        hl7Service.createMessage(order, diagnosis, sample, patient, providers);
+        hl7Service.createMessage(order, diagnosis, sample, patient, visit, providers);
     }
 
     @Test
-    public void testShouldCreateHL7Message() throws HL7Exception {
+    public void testShouldCreateHL7Message() throws IOException, HL7Exception {
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-111")
-                .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
+                .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).withCaresetting("someCaresetting").build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
+        OpenMRSVisit visit = new OpenMRSVisit();
+        visit.setVisitNumber("someVisitUuid");
+        OpenMRSPerson doctor = new OpenMRSPerson();
+        doctor.setPersonUuid("somePersonUuid");
+        doctor.setGivenName("someGivenName");
+        doctor.setFamilyName("someFamilyName");
+        ArrayList<OpenMRSRelationship> relationships = new ArrayList<>();
+        OpenMRSRelationship relationship = new OpenMRSRelationship();
+        relationship.setDoctor(doctor);
+        relationships.add(relationship);
+        visit.setRelationships(relationships);
+        visit.setOrder(order);
         List<OpenMRSProvider> providers = getProvidersData();
         List<Diagnosis> diagnosis = new ArrayList<Diagnosis>(0);
 
         HL7Service hl7Service = new HL7Service();
-        ORM_O01 hl7Message = (ORM_O01) hl7Service.createMessage(order, diagnosis, sample, patient, providers);
+        ORM_O01 hl7Message = (ORM_O01) hl7Service.createMessage(order, diagnosis, sample, patient , visit, providers);
 
         Assert.assertNotNull(hl7Message);
         assertEquals("NW", hl7Message.getORDER().getORC().getOrderControl().getValue());
+        assertEquals("someVisitUuid", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getVisitNumber().getIDNumber().getValue());
+        assertEquals("someGivenName", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getGivenName().getValue());
+        assertEquals("somePersonUuid", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getIDNumber().getValue());
+        assertEquals("someFamilyName", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getFamilyName().getFn1_Surname().getValue());
+        assertEquals("someCaresetting", hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getPatientClass().getValue());
     }
 
     @Test
     public void testShouldCreateCancelOrderMessageForDiscontinuedOrder() throws Exception {
         initMocks(this);
-        Order previousOrder = new Order(111, null, "somePlacerOrderUuid", "someTestName", "someTestPanel", "someTestUuid",
-                null, "ORD-111", "Comment", "someOrderFillerUuid");
+        Order previousOrder = new Order(111, null, "somePlacerOrderUuid", "someTestName", "someTestPanel",
+                "someTestUuid", null, "ORD-111", "Comment", "someOrderFillerUuid");
         OpenMRSOrder order = new OpenMRSOrderBuilder().withOrderNumber("ORD-222")
                 .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", " LabTest"))
-                .withPreviousOrderUuid(previousOrder.getPlacerOrderUuid()).withDiscontinued().build();
+                .withPreviousOrderUuid(previousOrder.getPlacerOrderUuid()).withDiscontinued().withCaresetting("someCaresetting").build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
+        OpenMRSVisit visit = new OpenMRSVisit();
+        visit.setVisitNumber("someVisitUuid");
+        OpenMRSPerson doctor = new OpenMRSPerson();
+        doctor.setPersonUuid("somePersonUuid");
+        doctor.setGivenName("someGivenName");
+        doctor.setFamilyName("someFamilyName");
+        ArrayList<OpenMRSRelationship> relationships = new ArrayList<>();
+        OpenMRSRelationship relationship = new OpenMRSRelationship();
+        relationship.setDoctor(doctor);
+        relationships.add(relationship);
+        visit.setRelationships(relationships);
+        visit.setOrder(order);
         List<OpenMRSProvider> providers = getProvidersData();
         List<Diagnosis> diagnosis = new ArrayList<Diagnosis>(0);
         when(orderRepository.findByPlacerOrderUuid(order.getPreviousOrderUuid())).thenReturn(previousOrder);
 
         HL7Service hl7Service = new HL7Service(orderRepository);
-        ORM_O01 hl7Message = (ORM_O01) hl7Service.createMessage(order, diagnosis, sample, patient, providers);
+        ORM_O01 hl7Message = (ORM_O01) hl7Service.createMessage(order, diagnosis, sample, patient, visit, providers);
 
         Assert.assertNotNull(hl7Message);
         assertEquals("CA", hl7Message.getORDER().getORC().getOrderControl().getValue());
@@ -103,6 +135,16 @@ public class HL7ServiceTest {
                 hl7Message.getORDER().getORC().getPlacerOrderNumber().getEntityIdentifier().getValue());
         assertEquals("someOrderFillerUuid",
                 hl7Message.getORDER().getORC().getFillerOrderNumber().getEntityIdentifier().getValue());
+        assertEquals("someVisitUuid",
+                hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getVisitNumber().getIDNumber().getValue());
+        assertEquals("someGivenName",
+                hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getGivenName().getValue());
+        assertEquals("somePersonUuid",
+                hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getIDNumber().getValue());
+        assertEquals("someFamilyName",
+                hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getAttendingDoctor()[0].getFamilyName().getFn1_Surname().getValue());
+        assertEquals("someCaresetting",
+                hl7Message.getPATIENT().getPATIENT_VISIT().getPV1().getPatientClass().getValue());
     }
 
     @Test(expected = HL7MessageException.class)
@@ -112,11 +154,14 @@ public class HL7ServiceTest {
                 .withConcept(buildConceptWithSource(Constants.LIS_CONCEPT_SOURCE_NAME, "123", "LabTest")).build();
         OpenMRSPatient patient = new OpenMRSPatient();
         Sample sample = new Sample();
+        OpenMRSVisit visit = new OpenMRSVisit();
+        visit.setRelationships(new ArrayList<>());
+        visit.setOrder(order);
         List<OpenMRSProvider> providers = getProvidersData();
         List<Diagnosis> diagnosis = new ArrayList<Diagnosis>(0);
 
         HL7Service hl7Service = new HL7Service();
-        hl7Service.createMessage(order, diagnosis, sample, patient, providers);
+        hl7Service.createMessage(order, diagnosis, sample, patient, visit, providers);
     }
 
     @Test

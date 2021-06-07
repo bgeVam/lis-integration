@@ -15,7 +15,7 @@ public class OpenMRSEncounter {
     private List<OpenMRSProvider> providers = new ArrayList<OpenMRSProvider>();
     private String encounterType;
     private String encounterRole;
-    private Visit visit;
+    private OpenMRSVisit visit;
     private PatientDocument patientDocument;
     private boolean panel;
 
@@ -131,11 +131,11 @@ public class OpenMRSEncounter {
         this.encounterRole = encounterRole;
     }
 
-    public Visit getVisit() {
+    public OpenMRSVisit getVisit() {
         return visit;
     }
 
-    public void setVisit(Visit visit) {
+    public void setVisit(OpenMRSVisit visit) {
         this.visit = visit;
     }
 }

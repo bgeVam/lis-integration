@@ -31,7 +31,41 @@ public class OrderMapper {
         order.setPatient(patient);
         order.setEncounter(encounter);
         order.setConcept(concept);
-
+        String careSetting = orderJSONNode.path("careSetting").path("name").asText();
+        order.setCareSetting(getAbreviationOfPatientClass(careSetting));
         return order;
+    }
+    private String getAbreviationOfPatientClass(String fullValue) {
+        String abriv = "";
+        switch (fullValue) {
+            case "Obstetrics":
+                abriv = "B";
+                break;
+            case "Commercial Account":
+                abriv = "C";
+                break;
+            case "Emergency":
+                abriv = "E";
+                break;
+            case "Inpatient":
+                abriv = "I";
+                break;
+            case "Not Applicable":
+                abriv = "N";
+                break;
+            case "Outpatient":
+                abriv = "O";
+                break;
+            case "Preadmit":
+                abriv = "P";
+                break;
+            case "Recurring patient":
+                abriv = "R";
+                break;
+            default:
+                abriv = "U";
+                break;
+        }
+        return abriv;
     }
 }
