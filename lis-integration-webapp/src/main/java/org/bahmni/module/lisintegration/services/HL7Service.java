@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,25 +46,8 @@ public class HL7Service {
     private final String sender = "BahmniEMR";
     private final String email = "root@Example-lis.com";
 
-    /**
-     * This method creates the HL7 message.
-     *
-     * @param order is the object of {@link OpenMRSOrder)
-     * @param diagnosisList is the list {@link List} object of {@link Diagnosis)
-     * @param sample is the object of {@link Sample)
-     * @param openMRSPatient is the object of {@link OpenMRSPatient)
-     * @param providers is the list {@link List} object of {@link OpenMRSProvider)
-     * @return if order is discontinued method returns cancelOrderMessage if not it returns createOrderMessage
-     * @throws HL7Exception if the message cannot be created via
-     *                      {@link #createOrderMessage(order, diagnosisList, sample, openMRSPatient, providers)}
-     *                      method
-     * @throws IOException if the message cannot be created via
-     *                     {@link #cancelOrderMessage(order, sample, openMRSPatient, providers)}
-     *                     {@link #createOrderMessage(order, diagnosisList, sample, openMRSPatient, providers)}
-     *                     method
-     */
     public AbstractMessage createMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
-            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception, IOException {
+            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
         if (order.isDiscontinued()) {
             return cancelOrderMessage(order, sample, openMRSPatient, providers);
         } else {
@@ -74,7 +56,7 @@ public class HL7Service {
     }
 
     /**
-     * This method creates order message to the HL7 message.
+     * creates the order message
      *
      * @param order          is the object of {@link OpenMRSOrder)
      * @param diagnosisList  is the list {@link List} object of {@link Diagnosis)
@@ -83,15 +65,9 @@ public class HL7Service {
      * @param providers      represents the list of the providers
      * @return message returns the message which is created by this method
      * @throws DataTypeException if there is a problem with the data type
-     *                           {@link #addPatientDetails(message, openMRSPatient)}
-     *                           {@link #addProviderDetails(providers, message)}
-     *                           method
-     * @throws IOException if the message cannot be created via
-     *                     {@link #createOrderMessage(order, diagnosisList, sample, openMRSPatient, providers)}
-     *                     method
      */
     private AbstractMessage createOrderMessage(OpenMRSOrder order, List<Diagnosis> diagnosisList, Sample sample,
-            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception, IOException {
+            OpenMRSPatient openMRSPatient, List<OpenMRSProvider> providers) throws HL7Exception {
         ORM_O01 message = new ORM_O01();
         addMessageHeader(order, message);
         addPatientDetails(message, openMRSPatient);
@@ -133,10 +109,9 @@ public class HL7Service {
      * @return message returns the message which is created by this method after
      *         being canceled
      * @throws DataTypeException if there is a problem with the data type
-     * @throws IOException if there is a problem with addProviderDetails
      */
     private AbstractMessage cancelOrderMessage(OpenMRSOrder order, Sample sample, OpenMRSPatient openMRSPatient,
-            List<OpenMRSProvider> providers) throws DataTypeException, IOException {
+            List<OpenMRSProvider> providers) throws DataTypeException {
         Order previousOrder = orderRepository.findByPlacerOrderUuid(order.getPreviousOrderUuid());
         if (previousOrder == null) {
             throw new HL7MessageException(
@@ -193,26 +168,10 @@ public class HL7Service {
         }
     }
 
-    /**
-     * This method adds details of provider to the HL7 message.
-     *
-     * @param providers is the list {@link List} object of {@link Diagnosis)
-     * @param message is the object of {@link OpenMRSOrder)
-     * @throws DataTypeException if there is a problem with the data type
-     * @throws IOException if the message cannot be created via
-     *                     {@link #getPersonUuidByProviderUuid(OpenMRSProvider)}
-     *                     {@link #getPerson(OpenMRSService)}
-     */
-    private void addProviderDetails(List<OpenMRSProvider> providers, ORM_O01 message)
-            throws DataTypeException, IOException {
-        OpenMRSService openMRSService = new OpenMRSService();
+    private void addProviderDetails(List<OpenMRSProvider> providers, ORM_O01 message) throws DataTypeException {
         OpenMRSProvider openMRSProvider = providers.get(0);
         ORC orc = message.getORDER().getORC();
-
-        String personUUID = openMRSService.getPersonUuidByProviderUuid(openMRSProvider.getUuid());
-        orc.getOrderingProvider(0).getGivenName().setValue(openMRSService.getPerson(personUUID).getGivenName());
-        orc.getOrderingProvider(0).getFamilyName().getSurname()
-                .setValue(openMRSService.getPerson(personUUID).getFamilyName());
+        orc.getOrderingProvider(0).getGivenName().setValue(openMRSProvider.getName());
         orc.getOrderingProvider(0).getIDNumber().setValue(openMRSProvider.getUuid());
         orc.getCallBackPhoneNumber(0).getEmailAddress().setValue(email);
     }
