@@ -10,6 +10,7 @@ public class OpenMRSObs {
     private OpenMRSConcept concept;
     private List<OpenMRSObs> groupMembers = new ArrayList<OpenMRSObs>();
     private Double value;
+    private String valueText;
 
     public OpenMRSObs() {
     }
@@ -74,4 +75,11 @@ public class OpenMRSObs {
         this.name = name;
     }
 
+    public String getValueText() {
+        return this.valueText;
+    }
+
+    public void setValueText(String valueText) {
+        this.valueText = valueText;
+    }
 }
